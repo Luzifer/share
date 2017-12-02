@@ -46,6 +46,11 @@ func main() {
 
 	inFile := rconfig.Args()[1]
 	upFile := path.Join(cfg.BasePath, path.Base(inFile))
+	mimeType := mime.TypeByExtension(path.Ext(inFile))
+	if mimeType == "" {
+		mimeType = "application/octet-stream"
+	}
+
 	inFileHandle, err := os.Open(inFile)
 	if err != nil {
 		log.WithError(err).Fatal("Unable to open source file")
@@ -62,7 +67,7 @@ func main() {
 		log.WithError(err).Fatal("Unable to assemble target path")
 	}
 
-	log.Infof("Uploading %q to %q", inFile, upFile)
+	log.Infof("Uploading %q to %q with type %q", inFile, upFile, mimeType)
 
 	sess := session.Must(session.NewSession())
 	svc := s3.New(sess)
@@ -70,7 +75,7 @@ func main() {
 	if _, err := svc.PutObject(&s3.PutObjectInput{
 		Body:        inFileHandle,
 		Bucket:      aws.String(cfg.Bucket),
-		ContentType: aws.String(mime.TypeByExtension(path.Ext(inFile))),
+		ContentType: aws.String(mimeType),
 		Key:         aws.String(upFile),
 	}); err != nil {
 		log.WithError(err).Fatalf("Unable to put file into S3")
