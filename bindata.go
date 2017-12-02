@@ -115,7 +115,7 @@ func frontendAppCoffee() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "frontend/app.coffee", size: 1228, md5checksum: "", mode: os.FileMode(436), modTime: time.Unix(1512238164, 0)}
+	info := bindataFileInfo{name: "frontend/app.coffee", size: 1228, md5checksum: "", mode: os.FileMode(436), modTime: time.Unix(1, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -162,7 +162,7 @@ func frontendAppJs() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "frontend/app.js", size: 1847, md5checksum: "", mode: os.FileMode(436), modTime: time.Unix(1512239484, 0)}
+	info := bindataFileInfo{name: "frontend/app.js", size: 1847, md5checksum: "", mode: os.FileMode(436), modTime: time.Unix(1, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -239,7 +239,7 @@ func frontendIndexHtml() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "frontend/index.html", size: 4113, md5checksum: "", mode: os.FileMode(436), modTime: time.Unix(1512237987, 0)}
+	info := bindataFileInfo{name: "frontend/index.html", size: 4113, md5checksum: "", mode: os.FileMode(436), modTime: time.Unix(1, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
