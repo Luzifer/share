@@ -1,9 +1,12 @@
 package main
 
+//go:generate make pack
+
 import (
 	"bytes"
 	"crypto/sha1"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"mime"
 	"os"
@@ -19,8 +22,9 @@ import (
 
 var (
 	cfg = struct {
-		BaseURL        string `flag:"base-url" default:"" description:"URL to prepend before filename" validate:"nonzero"`
+		BaseURL        string `flag:"base-url" default:"" description:"URL to prepend before filename"`
 		BasePath       string `flag:"base-path" default:"file/{{ printf \"%.2s\" .Hash }}/{{.Hash}}" description:"Path to upload the file to"`
+		Bootstrap      bool   `flag:"bootstrap" default:"false" description:"Upload frontend files into bucket"`
 		Bucket         string `flag:"bucket" default:"" description:"S3 bucket to upload files to" validate:"nonzero"`
 		VersionAndExit bool   `flag:"version" default:"false" description:"Prints current version and exits"`
 	}{}
@@ -40,34 +44,61 @@ func init() {
 }
 
 func main() {
+	if cfg.Bootstrap {
+		for _, asset := range []string{"index.html", "app.js"} {
+			if _, err := executeUpload(asset, asset, bytes.NewReader(MustAsset("frontend/"+asset))); err != nil {
+				log.WithError(err).Fatalf("Unable to upload bootstrap asset %q", asset)
+			}
+		}
+		log.Info("Bucket bootstrap finished: Frontend uploaded.")
+		return
+	}
+
 	if len(rconfig.Args()) == 1 {
 		log.Fatalf("Usage: share <file to upload>")
 	}
 
+	if cfg.BaseURL == "" {
+		log.Error("No BaseURL configured, output will be no complete URL")
+	}
+
 	inFile := rconfig.Args()[1]
+	inFileHandle, err := os.Open(inFile)
+	if err != nil {
+		log.WithError(err).Fatal("Unable to open source file")
+	}
+	upFile, err := calculateUploadFilename(inFile)
+	if err != nil {
+		log.WithError(err).Fatal("Unable to calculate upload filename")
+	}
+
+	url, err := executeUpload(inFile, upFile, inFileHandle)
+	if err != nil {
+		log.WithError(err).Fatal("Failed to upload file")
+	}
+	fmt.Println(url)
+}
+
+func calculateUploadFilename(inFile string) (string, error) {
 	upFile := path.Join(cfg.BasePath, path.Base(inFile))
+
+	fileHash, err := hashFile(inFile)
+	if err != nil {
+		return "", err
+	}
+
+	return executeTemplate(upFile, map[string]interface{}{
+		"Hash": fileHash,
+	})
+}
+
+func executeUpload(inFile, upFile string, inFileHandle io.ReadSeeker) (string, error) {
 	mimeType := mime.TypeByExtension(path.Ext(inFile))
 	if mimeType == "" {
 		mimeType = "application/octet-stream"
 	}
 
-	inFileHandle, err := os.Open(inFile)
-	if err != nil {
-		log.WithError(err).Fatal("Unable to open source file")
-	}
-
-	fileHash, err := hashFile(inFile)
-	if err != nil {
-		log.WithError(err).Fatal("Unable to calculate file hash")
-	}
-	upFile, err = executeTemplate(upFile, map[string]interface{}{
-		"Hash": fileHash,
-	})
-	if err != nil {
-		log.WithError(err).Fatal("Unable to assemble target path")
-	}
-
-	log.Infof("Uploading %q to %q with type %q", inFile, upFile, mimeType)
+	log.Debugf("Uploading %q to %q with type %q", inFile, upFile, mimeType)
 
 	sess := session.Must(session.NewSession())
 	svc := s3.New(sess)
@@ -78,10 +109,10 @@ func main() {
 		ContentType: aws.String(mimeType),
 		Key:         aws.String(upFile),
 	}); err != nil {
-		log.WithError(err).Fatalf("Unable to put file into S3")
+		return "", err
 	}
 
-	fmt.Printf("%s%s", cfg.BaseURL, upFile)
+	return fmt.Sprintf("%s%s", cfg.BaseURL, upFile), nil
 }
 
 func hashFile(inFile string) (string, error) {
