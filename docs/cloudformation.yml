@@ -1,0 +1,129 @@
+---
+
+AWSTemplateFormatVersion: "2010-09-09"
+Description: Sharing objects through S3
+
+Mappings:
+  RegionMap:
+    us-east-1:
+      S3HostedZoneId: Z3AQBSTGFYJSTF
+      S3WebsiteEndpoint: s3-website-us-east-1.amazonaws.com
+    us-west-1:
+      S3HostedZoneId: Z2F56UZL2M1ACD
+      S3WebsiteEndpoint: s3-website-us-west-1.amazonaws.com
+    us-west-2:
+      S3HostedZoneId: Z3BJ6K6RIION7M
+      S3WebsiteEndpoint: s3-website-us-west-2.amazonaws.com
+    eu-west-1:
+      S3HostedZoneId: Z1BKCTXD74EZPE
+      S3WebsiteEndpoint: s3-website-eu-west-1.amazonaws.com
+    ap-southeast-1:
+      S3HostedZoneId: Z3O0J2DXBE1FTB
+      S3WebsiteEndpoint: s3-website-ap-southeast-1.amazonaws.com
+    ap-southeast-2:
+      S3HostedZoneId: Z1WCIGYICN2BYD
+      S3WebsiteEndpoint: s3-website-ap-southeast-2.amazonaws.com
+    ap-northeast-1:
+      S3HostedZoneId: Z2M4EHUR26P7ZW
+      S3WebsiteEndpoint: s3-website-ap-northeast-1.amazonaws.com
+    sa-east-1:
+      S3HostedZoneId: Z31GFT0UA1I2HV
+      S3WebsiteEndpoint: s3-website-sa-east-1.amazonaws.com
+
+Outputs:
+  BucketName:
+    Value:
+      Ref: S3Bucket
+    Description: S3 Bucket for share.luzifer.io
+  CFDistribution:
+    Value:
+      Fn::GetAtt:
+      - CFDistribution
+      - DomainName
+    Description: DNS Name for CF Distribution
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      LifecycleConfiguration:
+        Rules:
+        - AbortIncompleteMultipartUpload:
+            DaysAfterInitiation: 7
+          ExpirationInDays: 90
+          Prefix: file/
+          Status: Enabled
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: S3Bucket
+      PolicyDocument:
+        Statement:
+        - Sid: PublicReadForGetBucketObjects
+          Effect: Allow
+          Principal: '*'
+          Action: s3:GetObject
+          Resource:
+            Fn::Join:
+            - ''
+            - - 'arn:aws:s3:::'
+              - Ref: S3Bucket
+              - '/*'
+
+
+  CFDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Aliases:
+        - share.luzifer.io
+        DefaultCacheBehavior:
+          AllowedMethods:
+          - GET
+          - HEAD
+          Compress: true
+          TargetOriginId: S3Origin
+          ForwardedValues:
+            QueryString: false
+            Cookies:
+              Forward: none
+          ViewerProtocolPolicy: redirect-to-https
+        DefaultRootObject: index.html
+        Enabled: true
+        HttpVersion: http2
+        IPV6Enabled: true
+        Origins:
+        - DomainName:
+            Fn::Join:
+            - .
+            - - Ref: S3Bucket
+              - Fn::FindInMap:
+                - RegionMap
+                - Ref: AWS::Region
+                - S3WebsiteEndpoint
+          Id: S3Origin
+          CustomOriginConfig:
+            HTTPPort: 80
+            HTTPSPort: 443
+            OriginProtocolPolicy: http-only
+        PriceClass: PriceClass_100
+        ViewerCertificate:
+          AcmCertificateArn:
+            Ref: Certificate
+          SslSupportMethod: sni-only
+
+  Certificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: '*.luzifer.io'
+      DomainValidationOptions:
+      - DomainName: '*.luzifer.io'
+        ValidationDomain: luzifer.io
+
+...
