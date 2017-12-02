@@ -1,5 +1,9 @@
 fileURL = undefined
 
+MSG_NOT_FOUND = 'File not found'
+MSG_NOT_PERMITTED = 'Not allowed to access file'
+MSG_GENERIC_ERR = 'Something went wrong'
+
 $ ->
   $(window).bind 'hashchange', hashLoad
   hashLoad()
@@ -9,10 +13,14 @@ hashLoad = ->
   embedFileInfo(file)
 
 embedFileInfo = (file) ->
+  if file == ''
+    return handleErrorMessage MSG_NOT_FOUND
+
   fileURL = file
   $.ajax file,
     method: 'HEAD'
     success: handleEmbed
+    error: handleError
 
 handleEmbed = (data, status, xhr) ->
   type = xhr.getResponseHeader 'Content-Type'
@@ -33,3 +41,16 @@ handleEmbed = (data, status, xhr) ->
     return
 
   $('.show-generic').show()
+
+handleError = (xhr, status) ->
+  message = switch xhr.status
+    when 404 then MSG_NOT_FOUND
+    when 403 then MSG_NOT_PERMITTED
+    else MSG_GENERIC_ERR
+
+  handleErrorMessage message
+
+handleErrorMessage = (message) ->
+  $('.error').text message
+  $('.show-loading').hide()
+  $('.show-error').show()
