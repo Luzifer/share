@@ -1,3 +1,7 @@
+# 0.2.2 / 2017-12-28
+
+  * Fix: Change had side-effects
+
 # 0.2.1 / 2017-12-28
 
   * Fix: Links work better without spaces
