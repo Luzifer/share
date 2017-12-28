@@ -1,3 +1,7 @@
+# 0.2.1 / 2017-12-28
+
+  * Fix: Links work better without spaces
+
 # 0.2.0 / 2017-12-02
 
   * Minor improvements when displaying image shares
