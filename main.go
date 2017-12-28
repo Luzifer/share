@@ -81,8 +81,10 @@ func main() {
 }
 
 func calculateUploadFilename(inFile string) (string, error) {
-	inFile = strings.Replace(inFile, " ", "_", -1)
-	upFile := path.Join(cfg.BasePath, path.Base(inFile))
+	upFile := path.Join(
+		cfg.BasePath,
+		strings.Replace(path.Base(inFile), " ", "_", -1),
+	)
 
 	fileHash, err := hashFile(inFile)
 	if err != nil {
