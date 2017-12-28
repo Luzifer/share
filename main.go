@@ -11,6 +11,7 @@ import (
 	"mime"
 	"os"
 	"path"
+	"strings"
 	"text/template"
 
 	"github.com/Luzifer/rconfig"
@@ -80,6 +81,7 @@ func main() {
 }
 
 func calculateUploadFilename(inFile string) (string, error) {
+	inFile = strings.Replace(inFile, " ", "_", -1)
 	upFile := path.Join(cfg.BasePath, path.Base(inFile))
 
 	fileHash, err := hashFile(inFile)
