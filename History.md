@@ -1,3 +1,7 @@
+# 0.3.1 / 2017-12-29
+
+  * Add dockerized version
+
 # 0.3.0 / 2017-12-29
 
   * Update vendored dependencies
