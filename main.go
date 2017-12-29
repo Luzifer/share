@@ -14,11 +14,11 @@ import (
 
 var (
 	cfg = struct {
-		BaseURL        string `flag:"base-url" default:"" description:"URL to prepend before filename"`
-		BasePath       string `flag:"base-path" default:"file/{{ printf \"%.2s\" .Hash }}/{{.Hash}}" description:"Path to upload the file to"`
+		BaseURL        string `flag:"base-url" env:"BASE_URL" default:"" description:"URL to prepend before filename"`
+		BasePath       string `flag:"base-path" env:"BASE_PATH" default:"file/{{ printf \"%.2s\" .Hash }}/{{.Hash}}" description:"Path to upload the file to"`
 		Bootstrap      bool   `flag:"bootstrap" default:"false" description:"Upload frontend files into bucket"`
-		Bucket         string `flag:"bucket" default:"" description:"S3 bucket to upload files to" validate:"nonzero"`
-		Listen         string `flag:"listen" default:"" description:"Enable HTTP server if set to IP/Port (e.g. ':3000')"`
+		Bucket         string `flag:"bucket" env:"BUCKET" default:"" description:"S3 bucket to upload files to" validate:"nonzero"`
+		Listen         string `flag:"listen" env:"LISTEN" default:"" description:"Enable HTTP server if set to IP/Port (e.g. ':3000')"`
 		VersionAndExit bool   `flag:"version" default:"false" description:"Prints current version and exits"`
 	}{}
 
