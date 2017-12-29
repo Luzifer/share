@@ -1,3 +1,8 @@
+# 0.3.0 / 2017-12-29
+
+  * Update vendored dependencies
+  * Add HTTP server mode
+
 # 0.2.2 / 2017-12-28
 
   * Fix: Change had side-effects
