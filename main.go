@@ -4,20 +4,11 @@ package main
 
 import (
 	"bytes"
-	"crypto/sha1"
+	"errors"
 	"fmt"
-	"io"
-	"io/ioutil"
-	"mime"
 	"os"
-	"path"
-	"strings"
-	"text/template"
 
 	"github.com/Luzifer/rconfig"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -27,6 +18,7 @@ var (
 		BasePath       string `flag:"base-path" default:"file/{{ printf \"%.2s\" .Hash }}/{{.Hash}}" description:"Path to upload the file to"`
 		Bootstrap      bool   `flag:"bootstrap" default:"false" description:"Upload frontend files into bucket"`
 		Bucket         string `flag:"bucket" default:"" description:"S3 bucket to upload files to" validate:"nonzero"`
+		Listen         string `flag:"listen" default:"" description:"Enable HTTP server if set to IP/Port (e.g. ':3000')"`
 		VersionAndExit bool   `flag:"version" default:"false" description:"Prints current version and exits"`
 	}{}
 
@@ -45,96 +37,57 @@ func init() {
 }
 
 func main() {
-	if cfg.Bootstrap {
-		for _, asset := range []string{"index.html", "app.js"} {
-			if _, err := executeUpload(asset, asset, bytes.NewReader(MustAsset("frontend/"+asset))); err != nil {
-				log.WithError(err).Fatalf("Unable to upload bootstrap asset %q", asset)
-			}
-		}
-		log.Info("Bucket bootstrap finished: Frontend uploaded.")
-		return
-	}
+	switch {
 
+	case cfg.Bootstrap:
+		if err := doBootstrap(); err != nil {
+			log.WithError(err).Fatal("Bootstrap failed")
+		}
+		log.Info("Bucket bootstrap finished: Frontend uploaded")
+
+	case cfg.Listen != "":
+		if err := doListen(); err != nil {
+			log.WithError(err).Fatal("HTTP server ended unclean")
+		}
+
+	default:
+		if err := doCLIUpload(); err != nil {
+			log.WithError(err).Fatal("Upload failed")
+		}
+
+	}
+}
+
+func doCLIUpload() error {
 	if len(rconfig.Args()) == 1 {
-		log.Fatalf("Usage: share <file to upload>")
+		return errors.New("Missing argument: File to upload")
 	}
 
 	if cfg.BaseURL == "" {
-		log.Error("No BaseURL configured, output will be no complete URL")
+		log.Warn("No BaseURL configured, output will be no complete URL")
 	}
 
-	inFile := rconfig.Args()[1]
-	inFileHandle, err := os.Open(inFile)
+	inFileName := rconfig.Args()[1]
+	inFileHandle, err := os.Open(inFileName)
 	if err != nil {
-		log.WithError(err).Fatal("Unable to open source file")
+		return fmt.Errorf("Unable to open source file: %s", err)
 	}
-	upFile, err := calculateUploadFilename(inFile)
+	defer inFileHandle.Close()
+
+	url, err := executeUpload(inFileName, inFileHandle, true)
 	if err != nil {
-		log.WithError(err).Fatal("Unable to calculate upload filename")
+		return fmt.Errorf("Unable to upload file: %s", err)
 	}
 
-	url, err := executeUpload(inFile, upFile, inFileHandle)
-	if err != nil {
-		log.WithError(err).Fatal("Failed to upload file")
-	}
 	fmt.Println(url)
+	return nil
 }
 
-func calculateUploadFilename(inFile string) (string, error) {
-	upFile := path.Join(
-		cfg.BasePath,
-		strings.Replace(path.Base(inFile), " ", "_", -1),
-	)
-
-	fileHash, err := hashFile(inFile)
-	if err != nil {
-		return "", err
+func doBootstrap() error {
+	for _, asset := range []string{"index.html", "app.js"} {
+		if _, err := executeUpload(asset, bytes.NewReader(MustAsset("frontend/"+asset)), false); err != nil {
+			return fmt.Errorf("Unable to upload bootstrap asset %q: %s", asset, err)
+		}
 	}
-
-	return executeTemplate(upFile, map[string]interface{}{
-		"Hash": fileHash,
-	})
-}
-
-func executeUpload(inFile, upFile string, inFileHandle io.ReadSeeker) (string, error) {
-	mimeType := mime.TypeByExtension(path.Ext(inFile))
-	if mimeType == "" {
-		mimeType = "application/octet-stream"
-	}
-
-	log.Debugf("Uploading %q to %q with type %q", inFile, upFile, mimeType)
-
-	sess := session.Must(session.NewSession())
-	svc := s3.New(sess)
-
-	if _, err := svc.PutObject(&s3.PutObjectInput{
-		Body:        inFileHandle,
-		Bucket:      aws.String(cfg.Bucket),
-		ContentType: aws.String(mimeType),
-		Key:         aws.String(upFile),
-	}); err != nil {
-		return "", err
-	}
-
-	return fmt.Sprintf("%s%s", cfg.BaseURL, upFile), nil
-}
-
-func hashFile(inFile string) (string, error) {
-	data, err := ioutil.ReadFile(inFile)
-	if err != nil {
-		return "", err
-	}
-	sum1 := sha1.Sum(data)
-	return fmt.Sprintf("%x", sum1), nil
-}
-
-func executeTemplate(tplStr string, vars map[string]interface{}) (string, error) {
-	tpl, err := template.New("basepath").Parse(tplStr)
-	if err != nil {
-		return "", err
-	}
-
-	buf := new(bytes.Buffer)
-	err = tpl.Execute(buf, vars)
-	return buf.String(), err
+	return nil
 }
