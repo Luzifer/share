@@ -11,7 +11,7 @@ class Share {
       this.hashLoad();
     });
 
-    let appTitle = `Share @ ${window.location.host}`
+    let appTitle = `Share @ ${window.location.host}`;
     $('title,.apptitle').text(appTitle);
 
     this.hashLoad();
@@ -45,11 +45,28 @@ class Share {
       $('.show-image').show();
       return;
     }
+
     if (type.match(/^video\//)) {
       let src = $('<source>');
       src.attr('src', fileURL);
       src.appendTo($('video'));
       $('.show-video').show();
+      return;
+    }
+
+    if (type.match(/^(text\/|application\/javascript)/)) {
+      $.ajax(fileURL, {
+        dataType: 'text',
+        method: 'GET',
+        success: (data) => {
+          $('code').text(data);
+          $('.show-text').show();
+          hljs.initHighlighting();
+        },
+        error: (xhr, status) => {
+          this.handleError(xhr, status);
+        },
+      });
       return;
     }
 

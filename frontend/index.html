@@ -14,12 +14,15 @@
 
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css"
           integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/androidstudio.min.css"
+          integrity="sha256-rEVnyeMfkKzmBwocdeeiqGOu1M/ttUHB7K0meKIwqvw=" crossorigin="anonymous" />
 
     <title>Share</title>
 
     <style>
       h1 { text-align: center; font-size: 75px; }
       h2 { text-align: center; font-size: 24px; }
+      pre code { color: #e83e8c; }
       .container { margin-top: 30px; }
       .show-generic, .show-image, .show-video, .show-error { display: none; }
     </style>
@@ -56,6 +59,10 @@
       </div>
     </div>
 
+    <div class="container show-text">
+      <pre><code></code></pre>
+    </div>
+
     <div class="container show-error">
       <h1>
 				<i class="fas fa-exclamation-circle"></i>
@@ -70,6 +77,9 @@
             integrity="sha256-ST2MecrXrJaAsqmfpk9XRQITlDoyMmUtgKBEndDisSc=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"
             integrity="sha256-5+02zu5UULQkO7w1GIr6vftCgMfFdZcAHeDtFnKZsBs=" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"
+            integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
 
     <script src="app.js"></script>
   </body>
