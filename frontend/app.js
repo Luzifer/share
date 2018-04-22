@@ -54,6 +54,14 @@ class Share {
       return;
     }
 
+    if (type.match(/^audio\/(aac|mp3|mpeg)$/)) {
+      let src = $('<source>');
+      src.attr('src', fileURL);
+      src.appendTo($('audio'));
+      $('.show-audio').show();
+      return;
+    }
+
     if (type.match(/^(text\/|application\/javascript)/)) {
       $.ajax(fileURL, {
         dataType: 'text',
