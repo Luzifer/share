@@ -10,6 +10,10 @@ class Share {
     $(window).bind('hashchange', (e) => {
       this.hashLoad();
     });
+
+    let appTitle = `Share @ ${window.location.host}`
+    $('title,.apptitle').text(appTitle);
+
     this.hashLoad();
   }
 
