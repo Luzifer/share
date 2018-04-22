@@ -1,10 +1,10 @@
 default:
 
-pack: generate
-	go-bindata -modtime 1 frontend
+lint:
+	docker run --rm -ti -v $(CURDIR):$(CURDIR) -w $(CURDIR) luzifer/eslint frontend/*.js
 
-generate:
-	coffee -c frontend/app.coffee
+pack:
+	go-bindata -modtime 1 frontend
 
 auto-hook-pre-commit: pack
 	git diff --exit-code bindata.go
