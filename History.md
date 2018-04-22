@@ -1,3 +1,11 @@
+# 0.4.0 / 2018-04-22
+
+  * Add support for audio embedding
+  * Add text display and code highlight
+  * Fix handling of hash changes
+  * Migrate to Bootstrap 4.0 and FontAwesome 5
+  * Use dynamic app title
+
 # 0.3.1 / 2017-12-29
 
   * Add dockerized version
