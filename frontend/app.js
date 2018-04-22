@@ -7,7 +7,9 @@ const MSG_GENERIC_ERR = 'Something went wrong';
 
 class Share {
   init() {
-    $(window).bind('hashchange', this.hashLoad);
+    $(window).bind('hashchange', (e) => {
+      this.hashLoad();
+    });
     this.hashLoad();
   }
 
@@ -31,7 +33,7 @@ class Share {
   handleEmbed(data, status, xhr) {
     let type = xhr.getResponseHeader('Content-Type');
 
-    $('.show-loading').hide();
+    $('.container').hide();
     $('.filename').text(fileURL.substring(fileURL.lastIndexOf('/') + 1));
 
     if (type.match(/^image\//)) {
@@ -70,7 +72,7 @@ class Share {
 
   handleErrorMessage(message) {
     $('.error').text(message);
-    $('.show-loading').hide();
+    $('.container').hide();
     $('.show-error').show();
   }
 
