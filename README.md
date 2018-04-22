@@ -16,3 +16,5 @@
 - Upload files to your sharing bucket:  
   `./share --bucket=<bucket from step 1> --base-url='https://your.site.com/#' <yourfile>`
 - Share the URL you received from last step
+
+After you've updated the binary you need to run the `--bootstrap` command once more to have the latest interface changes uploaded to your bucket.
