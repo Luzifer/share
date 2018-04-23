@@ -20,6 +20,7 @@ class Share {
   embedFileInfo(file = '') {
     if (file === '') {
       this.handleErrorMessage(MSG_NOT_FOUND);
+      return;
     }
 
     fileURL = file;
