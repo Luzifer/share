@@ -1,3 +1,7 @@
+# 0.4.1 / 2018-04-23
+
+  * Fix: Image links broken
+
 # 0.4.0 / 2018-04-22
 
   * Add support for audio embedding
