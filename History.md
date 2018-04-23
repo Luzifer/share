@@ -1,3 +1,7 @@
+# 0.4.2 / 2018-04-23
+
+  * Fix: Without file hash the index was shown
+
 # 0.4.1 / 2018-04-23
 
   * Fix: Image links broken
