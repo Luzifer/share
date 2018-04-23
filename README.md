@@ -7,6 +7,18 @@
 
 `share` is a small replacement I wrote for sharing my files through external services like CloudApp using Amazon S3. Files are uploaded using this utility into S3 and previewed (if supported) using the included frontend.
 
+## Browser Support
+
+The web frontend uses ECMAScript 6 (ES6) so a relatively modern browser is required:
+
+- Apple iOS >= 10.0
+- Apple Safari >= 10
+- Google Chrome >= 58
+- Microsoft Edge >= 14
+- Mozilla Firefox >= 52
+
+Internet Explorer and older versions of the above listed browsers might work (except IE) but are not supported and will never be.
+
 ## Setup / usage
 
 - Create a S3 bucket and CloudFront distribution  
