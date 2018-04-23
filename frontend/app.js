@@ -39,6 +39,7 @@ class Share {
 
     $('.container').hide();
     $('.filename').text(fileURL.substring(fileURL.lastIndexOf('/') + 1));
+    $('.filelink-href').attr('href', fileURL);
 
     if (type.match(/^image\//)) {
       $('.filelink-src').attr('src', fileURL);
@@ -78,7 +79,6 @@ class Share {
       return;
     }
 
-    $('.filelink-href').attr('href', fileURL);
     $('.show-generic').show();
   }
 
