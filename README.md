@@ -9,15 +9,7 @@
 
 ## Browser Support
 
-The web frontend uses ECMAScript 6 (ES6) so a relatively modern browser is required:
-
-- Apple iOS >= 10.0
-- Apple Safari >= 10
-- Google Chrome >= 58
-- Microsoft Edge >= 14
-- Mozilla Firefox >= 52
-
-Internet Explorer and older versions of the above listed browsers might work (except IE) but are not supported and will never be.
+The web frontend uses babel to ensure the JavaScript is supported by [browsers with more than 0.25% market share excluding Internet Explorer 11 and Opera Mini](http://browserl.ist/?q=%3E0.25%25%2C+not+ie+11%2C+not+op_mini+all).
 
 ## Setup / usage
 
