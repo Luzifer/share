@@ -3,9 +3,14 @@ default:
 lint:
 	docker run --rm -ti -v $(CURDIR):$(CURDIR) -w $(CURDIR) luzifer/eslint src/*.js
 
-pack:
-	cd src && npm install && npm run build
+pack: webpack
 	go-bindata -modtime 1 frontend/...
+
+webpack: src/node_modules
+	cd src && npm run build
+
+src/node_modules:
+	cd src && npm install
 
 auto-hook-pre-commit: pack
 	git diff --exit-code bindata.go
