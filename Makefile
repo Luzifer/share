@@ -1,9 +1,10 @@
 default:
 
 lint:
-	docker run --rm -ti -v $(CURDIR):$(CURDIR) -w $(CURDIR) luzifer/eslint frontend/*.js
+	docker run --rm -ti -v $(CURDIR):$(CURDIR) -w $(CURDIR) luzifer/eslint src/*.js
 
 pack:
+	cd src && npm install && npm run build
 	go-bindata -modtime 1 frontend/...
 
 auto-hook-pre-commit: pack
