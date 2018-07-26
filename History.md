@@ -1,3 +1,8 @@
+# 0.5.0 / 2018-07-26
+
+  * Update repo-runner image
+  * Broaden compatibility by using babel on JavaScript
+
 # 0.4.2 / 2018-04-23
 
   * Fix: Without file hash the index was shown
