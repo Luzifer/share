@@ -17,7 +17,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedFilename bool) (string, error) {
+func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedFilename bool, overrideMimeType string) (string, error) {
 	var (
 		upFile = inFileName
 		err    error
@@ -32,6 +32,10 @@ func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedF
 	mimeType := mime.TypeByExtension(path.Ext(upFile))
 	if mimeType == "" {
 		mimeType = "application/octet-stream"
+	}
+
+	if overrideMimeType != "" {
+		mimeType = overrideMimeType
 	}
 
 	log.Debugf("Uploading file to %q with type %q", upFile, mimeType)

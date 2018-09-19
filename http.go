@@ -19,7 +19,7 @@ func simpleFilePost(res http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	url, err := executeUpload(fh.Filename, f, true)
+	url, err := executeUpload(fh.Filename, f, true, "")
 	if err != nil {
 		log.WithError(err).Error("Uploading file from HTTP request failed")
 		http.Error(res, "Failed to upload file. For details see the log.", http.StatusInternalServerError)
