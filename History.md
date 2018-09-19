@@ -1,3 +1,8 @@
+# 0.6.0 / 2018-09-19
+
+  * Add stdin sharing
+  * Allow content-type being specified
+
 # 0.5.0 / 2018-07-26
 
   * Update repo-runner image
