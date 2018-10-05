@@ -1,3 +1,7 @@
+# 0.7.0 / 2018-10-05
+
+  * Shorten the default share URLs
+
 # 0.6.0 / 2018-09-19
 
   * Add stdin sharing
