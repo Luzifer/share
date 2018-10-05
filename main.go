@@ -16,7 +16,7 @@ import (
 var (
 	cfg = struct {
 		BaseURL        string `flag:"base-url" env:"BASE_URL" default:"" description:"URL to prepend before filename"`
-		BasePath       string `flag:"base-path" env:"BASE_PATH" default:"file/{{ printf \"%.2s\" .Hash }}/{{.Hash}}" description:"Path to upload the file to"`
+		BasePath       string `flag:"base-path" env:"BASE_PATH" default:"file/{{ printf \"%.6s\" .Hash }}" description:"Path to upload the file to"`
 		Bootstrap      bool   `flag:"bootstrap" default:"false" description:"Upload frontend files into bucket"`
 		Bucket         string `flag:"bucket" env:"BUCKET" default:"" description:"S3 bucket to upload files to" validate:"nonzero"`
 		ContentType    string `flag:"content-type,c" default:"" description:"Force content-type to be set to this value"`
