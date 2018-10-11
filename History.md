@@ -1,3 +1,8 @@
+# 0.8.0 / 2018-10-11
+
+  * Deps: Update vendored packages
+  * Add progress output to CLI upload
+
 # 0.7.0 / 2018-10-05
 
   * Shorten the default share URLs
