@@ -21,6 +21,7 @@ var (
 		Bucket         string `flag:"bucket" env:"BUCKET" default:"" description:"S3 bucket to upload files to" validate:"nonzero"`
 		ContentType    string `flag:"content-type,c" default:"" description:"Force content-type to be set to this value"`
 		Listen         string `flag:"listen" env:"LISTEN" default:"" description:"Enable HTTP server if set to IP/Port (e.g. ':3000')"`
+		Progress       bool   `flag:"progress" default:"false" description:"Show progress bar while uploading"`
 		VersionAndExit bool   `flag:"version" default:"false" description:"Prints current version and exits"`
 	}{}
 

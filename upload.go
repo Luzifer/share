@@ -10,10 +10,12 @@ import (
 	"mime"
 	"path"
 	"strings"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/cheggaaa/pb"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -43,12 +45,31 @@ func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedF
 	sess := session.Must(session.NewSession())
 	svc := s3.New(sess)
 
-	if _, err := inFileHandle.Seek(0, io.SeekStart); err != nil {
+	ps, err := newProgressSeeker(inFileHandle)
+	if err != nil {
 		return "", err
 	}
 
+	if cfg.Progress {
+		bar := pb.New64(ps.Size).Prefix(inFileName).SetUnits(pb.U_BYTES)
+		bar.Start()
+		barUpdate := true
+
+		go func() {
+			for barUpdate {
+				bar.Set64(ps.Progress)
+				<-time.After(100 * time.Millisecond)
+			}
+		}()
+
+		defer func() {
+			barUpdate = false
+			bar.Finish()
+		}()
+	}
+
 	if _, err := svc.PutObject(&s3.PutObjectInput{
-		Body:        inFileHandle,
+		Body:        ps,
 		Bucket:      aws.String(cfg.Bucket),
 		ContentType: aws.String(mimeType),
 		Key:         aws.String(upFile),

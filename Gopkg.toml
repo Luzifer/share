@@ -34,6 +34,10 @@
   version = "1.15.37"
 
 [[constraint]]
+  name = "github.com/cheggaaa/pb"
+  version = "^1.0.0"
+
+[[constraint]]
   name = "github.com/sirupsen/logrus"
   version = "1.0.6"
 
