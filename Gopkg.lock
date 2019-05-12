@@ -90,6 +90,14 @@
   version = "v0.0.3"
 
 [[projects]]
+  digest = "1:14715f705ff5dfe0ffd6571d7d201dd8e921030f8070321a79380d8ca4ec1a24"
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  pruneopts = "NUT"
+  revision = "ba968bfe8b2f7e042a574c888954fccecfa385b4"
+  version = "v0.8.1"
+
+[[projects]]
   digest = "1:ecf78eacf406c42f07f66d6b79fda24d2b92dc711bfd0760d0c931678f9621fe"
   name = "github.com/sirupsen/logrus"
   packages = ["."]
@@ -149,6 +157,7 @@
     "github.com/aws/aws-sdk-go/aws/session",
     "github.com/aws/aws-sdk-go/service/s3",
     "github.com/cheggaaa/pb",
+    "github.com/pkg/errors",
     "github.com/sirupsen/logrus",
   ]
   solver-name = "gps-cdcl"
