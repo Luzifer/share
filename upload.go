@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"compress/gzip"
 	"crypto/sha1"
 	"fmt"
 	"html/template"
@@ -16,10 +17,11 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/cheggaaa/pb"
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
-func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedFilename bool, overrideMimeType string) (string, error) {
+func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedFilename bool, overrideMimeType string, forceGzip bool) (string, error) {
 	var (
 		upFile = inFileName
 		err    error
@@ -41,6 +43,23 @@ func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedF
 	}
 
 	log.Debugf("Uploading file to %q with type %q", upFile, mimeType)
+
+	var contentEncoding *string
+	if forceGzip {
+		buf := new(bytes.Buffer)
+		gw := gzip.NewWriter(buf)
+
+		if _, err := io.Copy(gw, inFileHandle); err != nil {
+			return "", errors.Wrap(err, "Unable to compress file")
+		}
+
+		if err := gw.Close(); err != nil {
+			return "", errors.Wrap(err, "Unable to close gzip writer")
+		}
+
+		inFileHandle = bytes.NewReader(buf.Bytes())
+		contentEncoding = aws.String("gzip")
+	}
 
 	sess := session.Must(session.NewSession())
 	svc := s3.New(sess)
@@ -69,10 +88,11 @@ func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedF
 	}
 
 	if _, err := svc.PutObject(&s3.PutObjectInput{
-		Body:        ps,
-		Bucket:      aws.String(cfg.Bucket),
-		ContentType: aws.String(mimeType),
-		Key:         aws.String(upFile),
+		Body:            ps,
+		Bucket:          aws.String(cfg.Bucket),
+		ContentEncoding: contentEncoding,
+		ContentType:     aws.String(mimeType),
+		Key:             aws.String(upFile),
 	}); err != nil {
 		return "", err
 	}

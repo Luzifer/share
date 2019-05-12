@@ -9,8 +9,9 @@ import (
 	"io"
 	"os"
 
-	"github.com/Luzifer/rconfig"
 	log "github.com/sirupsen/logrus"
+
+	"github.com/Luzifer/rconfig"
 )
 
 var (
@@ -98,7 +99,7 @@ func doCLIUpload() error {
 		inFile = inFileHandle
 	}
 
-	url, err := executeUpload(inFileName, inFile, true, cfg.ContentType)
+	url, err := executeUpload(inFileName, inFile, true, cfg.ContentType, false)
 	if err != nil {
 		return fmt.Errorf("Unable to upload file: %s", err)
 	}
@@ -109,7 +110,7 @@ func doCLIUpload() error {
 
 func doBootstrap() error {
 	for _, asset := range []string{"index.html", "app.js"} {
-		if _, err := executeUpload(asset, bytes.NewReader(MustAsset("frontend/"+asset)), false, ""); err != nil {
+		if _, err := executeUpload(asset, bytes.NewReader(MustAsset("frontend/"+asset)), false, "", true); err != nil {
 			return fmt.Errorf("Unable to upload bootstrap asset %q: %s", asset, err)
 		}
 	}
