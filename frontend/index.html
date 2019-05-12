@@ -6,77 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha256-LA89z+k9fjgMKQ/kq4OO2Mrf8VltYml/VES+Rg0fh20=" crossorigin="anonymous" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.0.0/darkly/bootstrap.min.css"
-          integrity="sha256-bhD4/DdCApNAYlOpvKssUa2hD0Du8xrgOvtY4w25shM=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/combine/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css,npm/bootstrap-vue@2.0.0-rc.19/dist/bootstrap-vue.min.css,npm/bootswatch@4.3.1/dist/darkly/bootstrap.min.css,npm/highlight.js@9.15.6/styles/androidstudio.min.css">
 
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css"
-          integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/androidstudio.min.css"
-          integrity="sha256-rEVnyeMfkKzmBwocdeeiqGOu1M/ttUHB7K0meKIwqvw=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" 
+          integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 
     <title>Share</title>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-      <a class="navbar-brand" href="#"><i class="fas fa-share-alt-square"></i>
-        <span class="apptitle">Share</span></a>
-    </nav>
+    <div id="app"></div>
 
-    <div class="container show-loading">
-      <h1>
-        <i class="fas fa-spinner fa-pulse" aria-hidden="true"></i>
-      </h1>
-    </div>
-
-    <div class="container show-generic">
-      <h1>
-        <i class="fas fa-cloud-download-alt"></i>
-      </h1>
-      <h2><a href="#" class="filelink-href filename">untitled</a></h2>
-    </div>
-
-    <div class="container show-image text-center">
-      <a href="#" class="filelink-href">
-        <img src="" class="img-fluid filelink-src">
-      </a>
-    </div>
-
-    <div class="container show-video">
-      <div class="embed-responsive embed-responsive-16by9">
-        <video controls>
-        </video>
-      </div>
-    </div>
-
-    <div class="container show-audio text-center">
-      <audio controls></audio>
-    </div>
-
-    <div class="container show-text">
-      <pre><code></code></pre>
-    </div>
-
-    <div class="container show-error">
-      <h1>
-        <i class="fas fa-exclamation-circle"></i>
-      </h1>
-      <h2 class="error"></h2>
-    </div>
-
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"
-            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.1/popper.min.js"
-            integrity="sha256-ST2MecrXrJaAsqmfpk9XRQITlDoyMmUtgKBEndDisSc=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"
-            integrity="sha256-5+02zu5UULQkO7w1GIr6vftCgMfFdZcAHeDtFnKZsBs=" crossorigin="anonymous"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"
-            integrity="sha256-/BfiIkHlHoVihZdc6TFuj7MmJ0TWcWsMXkeDFwhi0zw=" crossorigin="anonymous"></script>
-
+    <script src="https://cdn.jsdelivr.net/combine/npm/vue@2.6.10,npm/bootstrap-vue@2.0.0-rc.19/dist/bootstrap-vue.min.js,npm/axios@0.18.0/dist/axios.min.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
