@@ -1,3 +1,7 @@
+# 0.9.1 / 2019-05-13
+
+  * Fix: Add missing dependency
+
 # 0.9.0 / 2019-05-13
 
   * Force bootstrap to apply gzip encoding
