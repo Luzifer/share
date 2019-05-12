@@ -1,3 +1,8 @@
+# 0.9.0 / 2019-05-13
+
+  * Force bootstrap to apply gzip encoding
+  * Re-vamp frontend files
+
 # 0.8.0 / 2018-10-11
 
   * Deps: Update vendored packages
