@@ -148,6 +148,7 @@ export default {
 
           this.loading = false
           this.fileType = contentType
+          this.fileName = this.path.substring(this.path.lastIndexOf('/')+1)
         })
         .catch(err => {
           switch (err.response.status) {
