@@ -1,3 +1,7 @@
+# 0.9.2 / 2019-06-23
+
+  * Fix: Missing filename in download
+
 # 0.9.1 / 2019-05-13
 
   * Fix: Add missing dependency
