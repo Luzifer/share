@@ -5,16 +5,16 @@
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.5",
     "babel-preset-env": "^1.7.0",
-    "css-loader": "^1.0.0",
-    "node-sass": "^4.13.1",
-    "sass-loader": "^7.0.3",
+    "css-loader": "^1.0.1",
+    "node-sass": "^4.14.1",
+    "sass-loader": "^7.3.1",
     "style-loader": "^0.21.0",
-    "vue-loader": "^15.7.0",
-    "vue-template-compiler": "^2.6.10",
-    "webpack": "^4.41.5",
-    "webpack-cli": "^3.1.0",
+    "vue-loader": "^15.9.3",
+    "vue-template-compiler": "^2.6.11",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
     "webpack-dev-middleware": "^1.4.0",
-    "webpack-hot-middleware": "^2.9.1"
+    "webpack-hot-middleware": "^2.25.0"
   },
   "license": "ISC",
   "name": "share",
@@ -24,6 +24,6 @@
   },
   "version": "0.0.1",
   "dependencies": {
-    "highlight.js": "^9.15.6"
+    "highlight.js": "^9.18.3"
   }
 }
