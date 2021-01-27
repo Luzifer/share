@@ -1,32 +1,31 @@
 // https://eslint.org/docs/user-guide/configuring
 
 module.exports = {
-  'root': true,
-  'parserOptions': {
+  root: true,
+  parserOptions: {
     parser: 'babel-eslint',
-    sourceType: 'module',
   },
-  'env': {
-    node: true,
+  env: {
+    browser: true,
   },
-  'extends': [
+  extends: [
     /*
      * https://github.com/vuejs/eslint-plugin-vue#priority-a-essential-error-prevention
      * consider switching to `plugin:vue/strongly-recommended` or `plugin:vue/recommended` for stricter rules.
      */
-    'plugin:vue/essential',
+    'plugin:vue/strongly-recommended',
     // https://github.com/standard/standard/blob/master/docs/RULES-en.md
     'eslint:recommended',
   ],
   // required to lint *.vue files
-  'plugins': ['vue'],
-  'globals': {
-    locale: true,
+  plugins: ['vue'],
+  globals: {
+    axios: true,
     process: true,
-    version: true,
+    Vue: true,
   },
   // add your custom rules here
-  'rules': {
+  rules: {
     'array-bracket-newline': ['error', { multiline: true }],
     'array-bracket-spacing': ['error'],
     'arrow-body-style': ['error', 'as-needed'],
@@ -41,7 +40,7 @@ module.exports = {
     'dot-location': ['error', 'property'],
     'dot-notation': ['error'],
     'eol-last': ['error', 'always'],
-    'eqeqeq': ['error', 'always', { 'null': 'ignore' }],
+    'eqeqeq': ['error', 'always', { null: 'ignore' }],
     'func-call-spacing': ['error', 'never'],
     'function-paren-newline': ['error', 'multiline'],
     'generator-star-spacing': ['off'], // allow async-await
@@ -55,6 +54,7 @@ module.exports = {
     'newline-per-chained-call': ['error'],
     'no-console': ['off'],
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off', // allow debugger during development
+    'no-duplicate-imports': ['error'],
     'no-else-return': ['error'],
     'no-extra-parens': ['error'],
     'no-implicit-coercion': ['error'],
@@ -64,6 +64,7 @@ module.exports = {
     'no-trailing-spaces': ['error'],
     'no-unneeded-ternary': ['error'],
     'no-useless-return': ['error'],
+    'no-var': ['error'],
     'no-whitespace-before-property': ['error'],
     'object-curly-newline': ['error', { consistent: true }],
     'object-curly-spacing': ['error', 'always'],
@@ -72,16 +73,21 @@ module.exports = {
     'prefer-arrow-callback': ['error'],
     'prefer-const': ['error'],
     'prefer-object-spread': ['error'],
+    'prefer-rest-params': ['error'],
     'prefer-template': ['error'],
-    'quote-props': ['error', 'consistent-as-needed', { keywords: true }],
+    'quote-props': ['error', 'consistent-as-needed', { keywords: false }],
     'quotes': ['error', 'single', { allowTemplateLiterals: true }],
     'semi': ['error', 'never'],
+    'sort-imports': ['error', { ignoreCase: true, ignoreDeclarationSort: false, ignoreMemberSort: false }],
+    'sort-keys': ['error', 'asc', { caseSensitive: true, natural: false }],
     'space-before-blocks': ['error', 'always'],
     'spaced-comment': ['warn', 'always'],
+    'space-before-function-paren': ['error', 'never'],
     'space-infix-ops': ['error'],
     'space-in-parens': ['error', 'never'],
     'space-unary-ops': ['error', { words: true, nonwords: false }],
     'switch-colon-spacing': ['error'],
+    'template-curly-spacing': ['error', 'never'],
     'unicode-bom': ['error', 'never'],
     'wrap-iife': ['error'],
     'yoda': ['error'],

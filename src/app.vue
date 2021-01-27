@@ -1,26 +1,32 @@
 <template>
   <div>
-
-    <b-navbar variant="primary" type="dark">
-      <b-navbar-brand href="#"><i class="fas fa-share-alt-square"></i> Share</b-navbar-brand>
+    <b-navbar
+      variant="primary"
+      type="dark"
+    >
+      <b-navbar-brand href="#">
+        <i class="fas fa-share-alt-square" /> Share
+      </b-navbar-brand>
     </b-navbar>
 
     <b-container class="mt-4">
       <b-row>
         <b-col>
-
           <b-card v-if="loading">
             <b-card-text class="text-center">
-              <h2><i class="fas fa-spinner fa-pulse"></i></h2>
+              <h2><i class="fas fa-spinner fa-pulse" /></h2>
               {{ strings.loading }}
             </b-card-text>
           </b-card>
 
           <template v-else>
-
-            <b-card v-if="error" bg-variant="danger" text-variant="white">
+            <b-card
+              v-if="error"
+              bg-variant="danger"
+              text-variant="white"
+            >
               <b-card-text class="text-center">
-                <h2><i class="fas fa-exclamation-circle"></i></h2>
+                <h2><i class="fas fa-exclamation-circle" /></h2>
                 {{ error }}
               </b-card-text>
             </b-card>
@@ -28,19 +34,39 @@
             <b-card v-else-if="fileType.startsWith('image/')">
               <b-card-text class="text-center">
                 <a :href="path">
-                  <b-img :src="path" fluid></b-img>
+                  <b-img
+                    :src="path"
+                    fluid
+                  />
                 </a>
               </b-card-text>
             </b-card>
 
             <b-card v-else-if="fileType.startsWith('video/')">
-              <b-embed type="video" :src="path" allowfullscreen controls></b-embed>
+              <b-embed
+                type="video"
+                :src="path"
+                allowfullscreen
+                controls
+              />
             </b-card>
 
             <b-card v-else-if="fileType.startsWith('audio/')">
               <b-card-text class="text-center">
-                <audio :src="path" controls></audio>
+                <audio
+                  :src="path"
+                  controls
+                />
               </b-card-text>
+            </b-card>
+
+            <b-card
+              v-else-if="fileType.startsWith('text/markdown')"
+              no-body
+            >
+              <b-card-body
+                v-html="renderMarkdown(text)"
+              />
             </b-card>
 
             <b-card v-else-if="fileType.startsWith('text/')">
@@ -49,28 +75,30 @@
 
             <b-card v-else>
               <b-card-text class="text-center">
-                <h2><i class="fas fa-cloud-download-alt"></i></h2>
-                <b-button :href="path" variant="success">{{ fileName }}</b-button>
+                <h2><i class="fas fa-cloud-download-alt" /></h2>
+                <b-button
+                  :href="path"
+                  variant="success"
+                >
+                  {{ fileName }}
+                </b-button>
               </b-card-text>
             </b-card>
-
           </template>
-
         </b-col>
       </b-row>
     </b-container>
-
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 import hljs from 'highlight.js'
 import rewrites from './mime-rewrite.js'
+import showdown from 'showdown'
 import strings from './strings.js'
 
 export default {
-  name: 'app',
-
   computed: {
     strings() {
       return strings
@@ -80,8 +108,8 @@ export default {
   data() {
     return {
       error: null,
-      fileType: null,
       fileName: '',
+      fileType: null,
       loading: true,
       path: '',
       text: '',
@@ -99,12 +127,18 @@ export default {
         this.loading = false
       }
     },
+
+    renderMarkdown(text) {
+      return new showdown.Converter().makeHtml(text)
+    },
   },
 
   mounted() {
     window.onhashchange = this.hashChange
     this.hashChange()
   },
+
+  name: 'App',
 
   watch: {
     fileType(v) {
@@ -121,7 +155,7 @@ export default {
           .then(resp => {
             this.text = resp.data
 
-            if (this.text.length < 200*1024 && v !== 'text/plain') {
+            if (this.text.length < 200 * 1024 && v !== 'text/plain') {
               // Only highlight up to 200k and not on text/plain
               window.setTimeout(() => hljs.initHighlighting(), 100)
             }
@@ -148,18 +182,18 @@ export default {
 
           this.loading = false
           this.fileType = contentType
-          this.fileName = this.path.substring(this.path.lastIndexOf('/')+1)
+          this.fileName = this.path.substring(this.path.lastIndexOf('/') + 1)
         })
         .catch(err => {
           switch (err.response.status) {
-            case 403:
-              this.error = strings.not_permitted
-              break
-            case 404:
-              this.error = strings.file_not_found
-              break
-            default:
-              this.error = `Something went wrong (Status ${err.response.status})`
+          case 403:
+            this.error = strings.not_permitted
+            break
+          case 404:
+            this.error = strings.file_not_found
+            break
+          default:
+            this.error = `Something went wrong (Status ${err.response.status})`
           }
           this.loading = false
         })

@@ -1,16 +1,30 @@
 default:
 
 lint:
-	docker run --rm -ti -v $(CURDIR):$(CURDIR) -w $(CURDIR) luzifer/eslint src/*.js
+	docker run --rm -ti \
+		-v "$(CURDIR):/src" \
+		-w "/src/src" \
+		node:12-alpine \
+		npx eslint --ext .js,.vue --fix .
 
 pack: webpack
-	go-bindata -modtime 1 frontend/...
+	go-bindata \
+		-modtime 1 \
+		frontend/...
 
 webpack: src/node_modules
-	cd src && npm run build
+	docker run --rm -i \
+		-v "$(CURDIR):/src" \
+		-w "/src/src" \
+		node:12-alpine \
+		npm run build
 
 src/node_modules:
-	cd src && npm install
+	docker run --rm -i \
+		-v "$(CURDIR):/src" \
+		-w "/src/src" \
+		node:12-alpine \
+		npm ci
 
 auto-hook-pre-commit: pack
 	git diff --exit-code bindata.go
