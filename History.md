@@ -1,3 +1,8 @@
+# 0.10.1 / 2021-01-27
+
+  * Improve Dockerfile
+  * Switch to go modules
+
 # 0.10.0 / 2021-01-27
 
   * Add markdown support, update deps, improve build
