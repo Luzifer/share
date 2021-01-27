@@ -1,16 +1,27 @@
-FROM golang:alpine
+FROM golang:alpine as builder
 
-LABEL maintainer "Knut Ahlers <knut@ahlers.me>"
-
-ADD . /go/src/github.com/Luzifer/share
+COPY . /go/src/github.com/Luzifer/share
 WORKDIR /go/src/github.com/Luzifer/share
 
 RUN set -ex \
- && apk add --update git ca-certificates \
- && go install -ldflags "-X main.version=$(git describe --tags || git rev-parse --short HEAD || echo dev)" \
- && apk del --purge git
+ && apk add --update git \
+ && go install \
+      -ldflags "-X main.version=$(git describe --tags --always || echo dev)" \
+      -mod=readonly
+
+FROM alpine:latest
+
+LABEL maintainer "Knut Ahlers <knut@ahlers.me>"
+
+RUN set -ex \
+ && apk --no-cache add \
+      ca-certificates
+
+COPY --from=builder /go/bin/share /usr/local/bin/share
 
 EXPOSE 3000
 
-ENTRYPOINT ["/go/bin/share"]
+ENTRYPOINT ["/usr/local/bin/share"]
 CMD ["--"]
+
+# vim: set ft=Dockerfile:
