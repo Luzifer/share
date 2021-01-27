@@ -1,3 +1,8 @@
+# 0.10.0 / 2021-01-27
+
+  * Add markdown support, update deps, improve build
+  * npm audit fix
+
 # 0.9.2 / 2019-06-23
 
   * Fix: Missing filename in download
