@@ -29,7 +29,7 @@ func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedF
 
 	if useCalculatedFilename {
 		if upFile, err = calculateUploadFilename(inFileName, inFileHandle); err != nil {
-			return "", fmt.Errorf("Unable to calculate upload filename: %s", err)
+			return "", errors.Wrap(err, "calculating upload filename")
 		}
 	}
 
@@ -50,11 +50,11 @@ func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedF
 		gw := gzip.NewWriter(buf)
 
 		if _, err := io.Copy(gw, inFileHandle); err != nil {
-			return "", errors.Wrap(err, "Unable to compress file")
+			return "", errors.Wrap(err, "compressing file")
 		}
 
 		if err := gw.Close(); err != nil {
-			return "", errors.Wrap(err, "Unable to close gzip writer")
+			return "", errors.Wrap(err, "closing gzip writer")
 		}
 
 		inFileHandle = bytes.NewReader(buf.Bytes())

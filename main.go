@@ -1,14 +1,15 @@
 package main
 
-//go:generate make pack
-
 import (
 	"bytes"
-	"errors"
+	"embed"
+	_ "embed"
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
+	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/Luzifer/rconfig/v2"
@@ -25,6 +26,9 @@ var (
 		Progress       bool   `flag:"progress" default:"false" description:"Show progress bar while uploading"`
 		VersionAndExit bool   `flag:"version" default:"false" description:"Prints current version and exits"`
 	}{}
+
+	//go:embed frontend/*
+	frontend embed.FS
 
 	version = "dev"
 )
@@ -65,7 +69,7 @@ func main() {
 
 func doCLIUpload() error {
 	if len(rconfig.Args()) == 1 {
-		return errors.New("Missing argument: File to upload")
+		return errors.New("missing argument: file to upload")
 	}
 
 	if cfg.BaseURL == "" {
@@ -93,7 +97,7 @@ func doCLIUpload() error {
 	} else {
 		inFileHandle, err := os.Open(inFileName)
 		if err != nil {
-			return fmt.Errorf("Unable to open source file: %s", err)
+			return errors.Wrap(err, "opening source file")
 		}
 		defer inFileHandle.Close()
 		inFile = inFileHandle
@@ -101,7 +105,7 @@ func doCLIUpload() error {
 
 	url, err := executeUpload(inFileName, inFile, true, cfg.ContentType, false)
 	if err != nil {
-		return fmt.Errorf("Unable to upload file: %s", err)
+		return errors.Wrap(err, "uploading file")
 	}
 
 	fmt.Println(url)
@@ -110,8 +114,13 @@ func doCLIUpload() error {
 
 func doBootstrap() error {
 	for _, asset := range []string{"index.html", "app.js"} {
-		if _, err := executeUpload(asset, bytes.NewReader(MustAsset("frontend/"+asset)), false, "", true); err != nil {
-			return fmt.Errorf("Unable to upload bootstrap asset %q: %s", asset, err)
+		content, err := frontend.ReadFile(strings.Join([]string{"frontend", asset}, "/"))
+		if err != nil {
+			return errors.Wrap(err, "reading baked asset")
+		}
+
+		if _, err := executeUpload(asset, bytes.NewReader(content), false, "", true); err != nil {
+			return errors.Wrapf(err, "uploading bootstrap asset %q", asset)
 		}
 	}
 	return nil

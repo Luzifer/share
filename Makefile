@@ -1,4 +1,4 @@
-default:
+default: webpack
 
 lint:
 	docker run --rm -ti \
@@ -6,11 +6,6 @@ lint:
 		-w "/src/src" \
 		node:12-alpine \
 		npx eslint --ext .js,.vue --fix .
-
-pack: webpack
-	go-bindata \
-		-modtime 1 \
-		frontend/...
 
 webpack: src/node_modules
 	docker run --rm -i \
@@ -25,9 +20,6 @@ src/node_modules:
 		-w "/src/src" \
 		node:12-alpine \
 		npm ci
-
-auto-hook-pre-commit: pack
-	git diff --exit-code bindata.go
 
 publish:
 	curl -sSLo golang.sh https://raw.githubusercontent.com/Luzifer/github-publish/master/golang.sh
