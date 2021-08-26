@@ -9,7 +9,7 @@
 
 ## Browser Support
 
-The web frontend uses babel to ensure the JavaScript is supported by [browsers with more than 0.25% market share excluding Internet Explorer 11 and Opera Mini](http://browserl.ist/?q=%3E0.25%25%2C+not+ie+11%2C+not+op_mini+all).
+The frontend can be used in all modern browsers. Internet Explorer is not supported.
 
 ## Setup / usage
 
