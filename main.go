@@ -113,7 +113,7 @@ func doCLIUpload() error {
 }
 
 func doBootstrap() error {
-	for _, asset := range []string{"index.html", "app.js"} {
+	for _, asset := range []string{"index.html", "app.js", "bundle.css", "bundle.js"} {
 		content, err := frontend.ReadFile(strings.Join([]string{"frontend", asset}, "/"))
 		if err != nil {
 			return errors.Wrap(err, "reading baked asset")
