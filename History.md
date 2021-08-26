@@ -1,3 +1,8 @@
+# 0.11.0 / 2021-08-26
+
+  * Move to simpler plain-js frontend with bundled assets
+  * Update dependencies, switch to embed instead of bindata, improve error handling
+
 # 0.10.1 / 2021-01-27
 
   * Improve Dockerfile
