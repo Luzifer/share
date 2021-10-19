@@ -6,6 +6,8 @@ require (
 	github.com/Luzifer/rconfig/v2 v2.3.0
 	github.com/aws/aws-sdk-go v1.40.30
 	github.com/cheggaaa/pb v1.0.29
+	github.com/gofrs/uuid v4.1.0+incompatible
+	github.com/gosimple/slug v1.11.0
 	github.com/pkg/errors v0.9.1
 	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/sirupsen/logrus v1.8.1
@@ -13,6 +15,7 @@ require (
 
 require (
 	github.com/Luzifer/rconfig v1.2.0 // indirect
+	github.com/gosimple/unidecode v1.0.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/onsi/ginkgo v1.16.4 // indirect

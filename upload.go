@@ -17,6 +17,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/cheggaaa/pb"
+	"github.com/gofrs/uuid"
+	"github.com/gosimple/slug"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
@@ -101,18 +103,22 @@ func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedF
 }
 
 func calculateUploadFilename(inFile string, inFileHandle io.ReadSeeker) (string, error) {
-	upFile := path.Join(
-		cfg.BasePath,
-		strings.Replace(path.Base(inFile), " ", "_", -1),
-	)
-
 	fileHash, err := hashFile(inFileHandle)
 	if err != nil {
 		return "", err
 	}
 
-	return executeTemplate(upFile, map[string]interface{}{
-		"Hash": fileHash,
+	safeFileName := strings.Join([]string{
+		slug.Make(strings.TrimSuffix(path.Base(inFile), path.Ext(inFile))),
+		path.Ext(inFile),
+	}, "")
+
+	return executeTemplate(cfg.FileTemplate, map[string]interface{}{
+		"Ext":          path.Ext(inFile),
+		"FileName":     path.Base(inFile),
+		"Hash":         fileHash,
+		"SafeFileName": safeFileName,
+		"UUID":         uuid.Must(uuid.NewV4()).String(),
 	})
 }
 
@@ -130,7 +136,7 @@ func hashFile(inFileHandle io.ReadSeeker) (string, error) {
 }
 
 func executeTemplate(tplStr string, vars map[string]interface{}) (string, error) {
-	tpl, err := template.New("basepath").Parse(tplStr)
+	tpl, err := template.New("filename").Parse(tplStr)
 	if err != nil {
 		return "", err
 	}

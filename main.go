@@ -17,12 +17,13 @@ import (
 
 var (
 	cfg = struct {
-		BaseURL        string `flag:"base-url" env:"BASE_URL" default:"" description:"URL to prepend before filename"`
-		BasePath       string `flag:"base-path" env:"BASE_PATH" default:"file/{{ printf \"%.6s\" .Hash }}" description:"Path to upload the file to"`
+		BaseURL        string `flag:"base-url" default:"" description:"URL to prepend before filename"`
+		BasePath       string `flag:"base-path" default:"" description:"DEPRECATED: Path to upload the file to"`
 		Bootstrap      bool   `flag:"bootstrap" default:"false" description:"Upload frontend files into bucket"`
-		Bucket         string `flag:"bucket" env:"BUCKET" default:"" description:"S3 bucket to upload files to" validate:"nonzero"`
-		ContentType    string `flag:"content-type,c" default:"" description:"Force content-type to be set to this value"`
-		Listen         string `flag:"listen" env:"LISTEN" default:"" description:"Enable HTTP server if set to IP/Port (e.g. ':3000')"`
+		Bucket         string `flag:"bucket" default:"" description:"S3 bucket to upload files to" validate:"nonzero"`
+		ContentType    string `flag:"content-type,c" vardefault:"file_template" description:"Force content-type to be set to this value"`
+		FileTemplate   string `flag:"file-template" default:"" description:"Full name template of the uploaded file"`
+		Listen         string `flag:"listen" default:"" description:"Enable HTTP server if set to IP/Port (e.g. ':3000')"`
 		Progress       bool   `flag:"progress" default:"false" description:"Show progress bar while uploading"`
 		VersionAndExit bool   `flag:"version" default:"false" description:"Prints current version and exits"`
 	}{}
@@ -33,8 +34,12 @@ var (
 	version = "dev"
 )
 
-func init() {
+func initApp() {
 	rconfig.AutoEnv(true)
+	rconfig.SetVariableDefaults(map[string]string{
+		"file_template": `file/{{ printf "%.6s" .Hash }}/{{ .SafeFileName }}`,
+	})
+
 	if err := rconfig.ParseAndValidate(&cfg); err != nil {
 		log.Fatalf("Unable to parse commandline options: %s", err)
 	}
@@ -43,9 +48,16 @@ func init() {
 		fmt.Printf("share %s\n", version)
 		os.Exit(0)
 	}
+
+	if cfg.BasePath != "" {
+		cfg.FileTemplate = strings.Join([]string{strings.TrimRight(cfg.BasePath, "/"), `{{ .SafeFileName }}`}, "/")
+		log.WithField("file-template", cfg.FileTemplate).Warn("Using deprecated base-path parameter! Using update file-template...")
+	}
 }
 
 func main() {
+	initApp()
+
 	switch {
 
 	case cfg.Bootstrap:
@@ -81,10 +93,12 @@ func doCLIUpload() error {
 	inFileName := rconfig.Args()[1]
 
 	if inFileName == "-" {
-		inFileName = "stdin"
 		if cfg.ContentType == "" {
 			// If we don't have an explicitly set content-type assume stdin contains text
+			inFileName = "stdin"
 			cfg.ContentType = "text/plain"
+		} else if ext, err := mimeResolver.ExtensionsByType(cfg.ContentType); err == nil {
+			inFileName = strings.Join([]string{"stdin", ext}, "")
 		}
 
 		// Stdin is not seekable, so we need to buffer it
