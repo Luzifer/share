@@ -1,3 +1,10 @@
+# 0.12.0 / 2021-10-19
+
+  * Document templating
+  * Fix: Don't provide file template in content-type
+  * Allow specifying log-level
+  * Enable full-path templating for uploads, use safe filenames
+
 # 0.11.0 / 2021-08-26
 
   * Move to simpler plain-js frontend with bundled assets
