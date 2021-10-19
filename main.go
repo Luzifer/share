@@ -21,8 +21,8 @@ var (
 		BasePath       string `flag:"base-path" default:"" description:"DEPRECATED: Path to upload the file to"`
 		Bootstrap      bool   `flag:"bootstrap" default:"false" description:"Upload frontend files into bucket"`
 		Bucket         string `flag:"bucket" default:"" description:"S3 bucket to upload files to" validate:"nonzero"`
-		ContentType    string `flag:"content-type,c" vardefault:"file_template" description:"Force content-type to be set to this value"`
-		FileTemplate   string `flag:"file-template" default:"" description:"Full name template of the uploaded file"`
+		ContentType    string `flag:"content-type,c" default:"" description:"Force content-type to be set to this value"`
+		FileTemplate   string `flag:"file-template" vardefault:"file_template" description:"Full name template of the uploaded file"`
 		Listen         string `flag:"listen" default:"" description:"Enable HTTP server if set to IP/Port (e.g. ':3000')"`
 		LogLevel       string `flag:"log-level" default:"info" description:"Log level (debug, info, warn, error, fatal)"`
 		Progress       bool   `flag:"progress" default:"false" description:"Show progress bar while uploading"`
