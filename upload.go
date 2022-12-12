@@ -9,6 +9,7 @@ import (
 	"io"
 	"io/ioutil"
 	"mime"
+	"os"
 	"path"
 	"strings"
 	"time"
@@ -73,6 +74,7 @@ func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedF
 
 	if cfg.Progress {
 		bar := pb.New64(ps.Size).Prefix(inFileName).SetUnits(pb.U_BYTES)
+		bar.Output = os.Stderr
 		bar.Start()
 		barUpdate := true
 
