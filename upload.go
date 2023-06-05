@@ -64,7 +64,12 @@ func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedF
 		contentEncoding = aws.String("gzip")
 	}
 
-	sess := session.Must(session.NewSession())
+	var awsCfgs []*aws.Config
+	if cfg.Endpoint != "" {
+		awsCfgs = append(awsCfgs, &aws.Config{Endpoint: &cfg.Endpoint, S3ForcePathStyle: aws.Bool(true)})
+	}
+
+	sess := session.Must(session.NewSession(awsCfgs...))
 	svc := s3.New(sess)
 
 	ps, err := newProgressSeeker(inFileHandle)

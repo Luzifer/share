@@ -22,6 +22,7 @@ var (
 		Bootstrap      bool   `flag:"bootstrap" default:"false" description:"Upload frontend files into bucket"`
 		Bucket         string `flag:"bucket" default:"" description:"S3 bucket to upload files to" validate:"nonzero"`
 		ContentType    string `flag:"content-type,c" default:"" description:"Force content-type to be set to this value"`
+		Endpoint       string `flag:"endpoint" default:"" description:"Override AWS S3 endpoint (i.e. to use MinIO)"`
 		FileTemplate   string `flag:"file-template" vardefault:"file_template" description:"Full name template of the uploaded file"`
 		Listen         string `flag:"listen" default:"" description:"Enable HTTP server if set to IP/Port (e.g. ':3000')"`
 		LogLevel       string `flag:"log-level" default:"info" description:"Log level (debug, info, warn, error, fatal)"`
