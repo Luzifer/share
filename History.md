@@ -1,3 +1,9 @@
+# 0.13.0 / 2023-06-05
+
+  * Add support for setting S3 compatible endpoint
+  * Put progress bar on Stderr
+  * Update dependencies
+
 # 0.12.0 / 2021-10-19
 
   * Document templating
