@@ -29,7 +29,7 @@ You can specify where in the bucket the file should be stored and how it should 
 
 - `{{ .Ext }}` - The extension of the file (including the leading dot, i.e. `.txt`)
 - `{{ .FileName }}` - The original filename without changes (i.e. `my video.mp4`)
-- `{{ .Hash }}` - The SHA1 hash of the file content
+- `{{ .Hash }}` - The SHA256 hash of the file content
 - `{{ .SafeFileName }}` - URL-safe version of the filename (i.e. `my-video.mp4`)
 - `{{ .UUID }}` - Random UUIDv4 to be used within the URL to make it hard to guess
 
