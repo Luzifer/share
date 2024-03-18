@@ -1,13 +1,16 @@
 FROM golang:alpine as builder
 
-COPY . /go/src/github.com/Luzifer/share
-WORKDIR /go/src/github.com/Luzifer/share
+COPY . /src/share
+WORKDIR /src/share
 
 RUN set -ex \
  && apk add --update git \
  && go install \
       -ldflags "-X main.version=$(git describe --tags --always || echo dev)" \
-      -mod=readonly
+      -mod=readonly \
+      -modcacherw \
+      -trimpath
+
 
 FROM alpine:latest
 
