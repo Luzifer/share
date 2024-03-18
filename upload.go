@@ -94,6 +94,7 @@ func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedF
 
 		defer func() {
 			barUpdate = false
+			bar.SetCurrent(ps.Progress)
 			bar.Finish()
 		}()
 	}
