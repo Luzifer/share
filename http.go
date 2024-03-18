@@ -1,32 +1,51 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"time"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/gofrs/uuid"
+	"github.com/sirupsen/logrus"
 )
 
-func doListen() error {
+func doListen() (err error) {
 	http.HandleFunc("/post", simpleFilePost)
-	return http.ListenAndServe(cfg.Listen, nil)
+
+	server := &http.Server{
+		Addr:              cfg.Listen,
+		Handler:           http.DefaultServeMux,
+		ReadHeaderTimeout: time.Second,
+	}
+
+	if err = server.ListenAndServe(); err != nil {
+		return fmt.Errorf("listening for HTTP traffic: %w", err)
+	}
+
+	return nil
 }
 
-func simpleFilePost(res http.ResponseWriter, r *http.Request) {
+func simpleFilePost(w http.ResponseWriter, r *http.Request) {
+	var (
+		reqUUID = uuid.Must(uuid.NewV4()).String()
+		logger  = logrus.WithField("req-id", reqUUID)
+		errStr  = fmt.Sprintf("something went wrong: %s", reqUUID)
+	)
+
 	f, fh, err := r.FormFile("file")
 	if err != nil {
-		log.WithError(err).Error("Unable to retrieve file from request")
-		http.Error(res, "Could not retrieve your file", http.StatusBadRequest)
+		logger.WithError(err).Error("retrieving file from request")
+		http.Error(w, errStr, http.StatusBadRequest)
 		return
 	}
 
 	url, err := executeUpload(fh.Filename, f, true, "", false)
 	if err != nil {
-		log.WithError(err).Error("Uploading file from HTTP request failed")
-		http.Error(res, "Failed to upload file. For details see the log.", http.StatusInternalServerError)
+		logger.WithError(err).Error("uploading file from HTTP request")
+		http.Error(w, errStr, http.StatusInternalServerError)
 		return
 	}
 
-	res.Header().Set("Content-Type", "text/plain")
-	res.WriteHeader(http.StatusOK)
-	res.Write([]byte(url))
+	w.Header().Set("Content-Type", "text/plain")
+	http.Error(w, url, http.StatusOK)
 }

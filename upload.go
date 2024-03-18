@@ -3,13 +3,11 @@ package main
 import (
 	"bytes"
 	"compress/gzip"
-	"crypto/sha1"
+	"crypto/sha256"
 	"fmt"
 	"html/template"
 	"io"
-	"io/ioutil"
 	"mime"
-	"os"
 	"path"
 	"strings"
 	"time"
@@ -17,13 +15,16 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/cheggaaa/pb"
+	"github.com/cheggaaa/pb/v3"
 	"github.com/gofrs/uuid"
 	"github.com/gosimple/slug"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 )
 
+const barUpdateInterval = 100 * time.Millisecond
+
+//revive:disable-next-line:flag-parameter // Fine in this case
 func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedFilename bool, overrideMimeType string, forceGzip bool) (string, error) {
 	var (
 		upFile = inFileName
@@ -78,15 +79,16 @@ func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedF
 	}
 
 	if cfg.Progress {
-		bar := pb.New64(ps.Size).Prefix(inFileName).SetUnits(pb.U_BYTES)
-		bar.Output = os.Stderr
+		bar := pb.New64(ps.Size)
+		bar.Set(pb.Bytes, true)
+		bar.Set("prefix", inFileName)
 		bar.Start()
 		barUpdate := true
 
 		go func() {
 			for barUpdate {
-				bar.Set64(ps.Progress)
-				<-time.After(100 * time.Millisecond)
+				bar.SetCurrent(ps.Progress)
+				time.Sleep(barUpdateInterval)
 			}
 		}()
 
@@ -96,14 +98,14 @@ func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedF
 		}()
 	}
 
-	if _, err := svc.PutObject(&s3.PutObjectInput{
+	if _, err = svc.PutObject(&s3.PutObjectInput{
 		Body:            ps,
 		Bucket:          aws.String(cfg.Bucket),
 		ContentEncoding: contentEncoding,
 		ContentType:     aws.String(mimeType),
 		Key:             aws.String(upFile),
 	}); err != nil {
-		return "", err
+		return "", fmt.Errorf("putting object to S3: %w", err)
 	}
 
 	return fmt.Sprintf("%s%s", cfg.BaseURL, upFile), nil
@@ -129,26 +131,29 @@ func calculateUploadFilename(inFile string, inFileHandle io.ReadSeeker) (string,
 	})
 }
 
-func hashFile(inFileHandle io.ReadSeeker) (string, error) {
-	if _, err := inFileHandle.Seek(0, io.SeekStart); err != nil {
-		return "", err
+func hashFile(inFileHandle io.ReadSeeker) (hexHash string, err error) {
+	if _, err = inFileHandle.Seek(0, io.SeekStart); err != nil {
+		return "", fmt.Errorf("resetting reader: %w", err)
 	}
 
-	data, err := ioutil.ReadAll(inFileHandle)
-	if err != nil {
-		return "", err
+	shaHash := sha256.New()
+	if _, err = io.Copy(shaHash, inFileHandle); err != nil {
+		return "", fmt.Errorf("reading data into hash: %w", err)
 	}
-	sum1 := sha1.Sum(data)
-	return fmt.Sprintf("%x", sum1), nil
+
+	return fmt.Sprintf("%x", shaHash.Sum(nil)), nil
 }
 
 func executeTemplate(tplStr string, vars map[string]interface{}) (string, error) {
 	tpl, err := template.New("filename").Parse(tplStr)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("parsing filename template: %w", err)
 	}
 
 	buf := new(bytes.Buffer)
-	err = tpl.Execute(buf, vars)
-	return buf.String(), err
+	if err = tpl.Execute(buf, vars); err != nil {
+		return "", fmt.Errorf("executing filename template: %w", err)
+	}
+
+	return buf.String(), nil
 }

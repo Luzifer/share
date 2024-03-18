@@ -1,54 +1,54 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"io"
-	"io/ioutil"
 )
 
 type progressSeeker struct {
 	Size     int64
 	Progress int64
 
-	o io.ReadSeeker
+	next io.ReadSeeker
 }
 
-func newProgressSeeker(o io.ReadSeeker) (*progressSeeker, error) {
-	if _, err := o.Seek(0, io.SeekStart); err != nil {
-		return nil, err
-	}
-
-	data, err := ioutil.ReadAll(o)
+func newProgressSeeker(next io.ReadSeeker) (*progressSeeker, error) {
+	lastByte, err := next.Seek(0, io.SeekEnd)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("seeking end of reader: %w", err)
 	}
 
-	if _, err := o.Seek(0, io.SeekStart); err != nil {
-		return nil, err
+	if _, err := next.Seek(0, io.SeekStart); err != nil {
+		return nil, fmt.Errorf("seeking start of reader: %w", err)
 	}
 
 	return &progressSeeker{
-		o:    o,
-		Size: int64(len(data)),
+		next: next,
+		Size: lastByte,
 	}, nil
 }
 
 func (p *progressSeeker) Read(o []byte) (n int, err error) {
-	i, err := p.o.Read(o)
+	i, err := p.next.Read(o)
+	if err != nil {
+		if errors.Is(err, io.EOF) {
+			return i, io.EOF
+		}
+		return i, fmt.Errorf("reading next reader: %w", err)
+	}
 
 	p.Progress += int64(i)
 
-	return i, err
+	return i, nil
 }
 
 func (p *progressSeeker) Seek(offset int64, whence int) (int64, error) {
-	switch whence {
-	case io.SeekStart:
-		p.Progress = offset
-	case io.SeekCurrent:
-		p.Progress = p.Progress + offset
-	case io.SeekEnd:
-		p.Progress = p.Size + offset
+	pos, err := p.next.Seek(offset, whence)
+	if err != nil {
+		return pos, fmt.Errorf("seeking next reader: %w", err)
 	}
 
-	return p.o.Seek(offset, whence)
+	p.Progress = pos
+	return pos, nil
 }

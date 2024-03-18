@@ -1,10 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"mime"
 	"strings"
-
-	"github.com/pkg/errors"
 )
 
 type mimeDB map[string]string
@@ -23,7 +22,7 @@ func (m mimeDB) ExtensionsByType(t string) (string, error) {
 
 	exts, err := mime.ExtensionsByType(t)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("getting mime extension: %w", err)
 	}
 
 	for _, ext := range exts {
@@ -33,5 +32,5 @@ func (m mimeDB) ExtensionsByType(t string) (string, error) {
 		return ext, nil
 	}
 
-	return "", errors.New("no extension found")
+	return "", fmt.Errorf("no extension found")
 }

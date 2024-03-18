@@ -3,14 +3,13 @@ package main
 import (
 	"bytes"
 	"embed"
-	_ "embed"
 	"fmt"
 	"io"
 	"os"
 	"strings"
 
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 
 	"github.com/Luzifer/rconfig/v2"
 )
@@ -18,7 +17,6 @@ import (
 var (
 	cfg = struct {
 		BaseURL        string `flag:"base-url" default:"" description:"URL to prepend before filename"`
-		BasePath       string `flag:"base-path" default:"" description:"DEPRECATED: Path to upload the file to"`
 		Bootstrap      bool   `flag:"bootstrap" default:"false" description:"Upload frontend files into bucket"`
 		Bucket         string `flag:"bucket" default:"" description:"S3 bucket to upload files to" validate:"nonzero"`
 		ContentType    string `flag:"content-type,c" default:"" description:"Force content-type to be set to this value"`
@@ -36,54 +34,56 @@ var (
 	version = "dev"
 )
 
-func initApp() {
+func initApp() (err error) {
 	rconfig.AutoEnv(true)
 	rconfig.SetVariableDefaults(map[string]string{
 		"file_template": `file/{{ printf "%.6s" .Hash }}/{{ .SafeFileName }}`,
 	})
 
-	if err := rconfig.ParseAndValidate(&cfg); err != nil {
-		log.Fatalf("Unable to parse commandline options: %s", err)
+	if err = rconfig.ParseAndValidate(&cfg); err != nil {
+		return fmt.Errorf("parsing CLI options: %w", err)
 	}
 
-	if cfg.VersionAndExit {
-		fmt.Printf("share %s\n", version)
-		os.Exit(0)
+	l, err := logrus.ParseLevel(cfg.LogLevel)
+	if err != nil {
+		return fmt.Errorf("parsing log-level: %w", err)
 	}
+	logrus.SetLevel(l)
 
-	if l, err := log.ParseLevel(cfg.LogLevel); err != nil {
-		log.WithError(err).Fatal("Unable to parse log level")
-	} else {
-		log.SetLevel(l)
-	}
-
-	if cfg.BasePath != "" {
-		cfg.FileTemplate = strings.Join([]string{strings.TrimRight(cfg.BasePath, "/"), `{{ .SafeFileName }}`}, "/")
-		log.WithField("file-template", cfg.FileTemplate).Warn("Using deprecated base-path parameter! Using update file-template...")
-	}
+	return nil
 }
 
 func main() {
-	initApp()
+	var err error
+	if err = initApp(); err != nil {
+		logrus.WithError(err).Fatal("initializing app")
+	}
+
+	if cfg.VersionAndExit {
+		fmt.Printf("share %s\n", version) //nolint:forbidigo // Fine for version info
+		os.Exit(0)
+	}
 
 	switch {
-
 	case cfg.Bootstrap:
 		if err := doBootstrap(); err != nil {
-			log.WithError(err).Fatal("Bootstrap failed")
+			logrus.WithError(err).Fatal("bootstrapping resources")
 		}
-		log.Info("Bucket bootstrap finished: Frontend uploaded")
+		logrus.Info("Bucket bootstrap finished: Frontend uploaded")
 
 	case cfg.Listen != "":
+		logrus.WithFields(logrus.Fields{
+			"addr":    cfg.Listen,
+			"version": version,
+		}).Info("share HTTP server started")
 		if err := doListen(); err != nil {
-			log.WithError(err).Fatal("HTTP server ended unclean")
+			logrus.WithError(err).Fatal("running HTTP server")
 		}
 
 	default:
 		if err := doCLIUpload(); err != nil {
-			log.WithError(err).Fatal("Upload failed")
+			logrus.WithError(err).Fatal("uploading file")
 		}
-
 	}
 }
 
@@ -93,7 +93,7 @@ func doCLIUpload() error {
 	}
 
 	if cfg.BaseURL == "" {
-		log.Warn("No BaseURL configured, output will be no complete URL")
+		logrus.Warn("No BaseURL configured, output will be no complete URL")
 	}
 
 	var inFile io.ReadSeeker
@@ -112,16 +112,16 @@ func doCLIUpload() error {
 		// Stdin is not seekable, so we need to buffer it
 		buf := new(bytes.Buffer)
 		if _, err := io.Copy(buf, os.Stdin); err != nil {
-			log.WithError(err).Fatal("Could not read stdin")
+			logrus.WithError(err).Fatal("reading stdin")
 		}
 
 		inFile = bytes.NewReader(buf.Bytes())
 	} else {
-		inFileHandle, err := os.Open(inFileName)
+		inFileHandle, err := os.Open(inFileName) //#nosec:G304 // Inentional read of arbitrary file
 		if err != nil {
 			return errors.Wrap(err, "opening source file")
 		}
-		defer inFileHandle.Close()
+		defer inFileHandle.Close() //nolint:errcheck // Irrelevant, file is closed by process exit
 		inFile = inFileHandle
 	}
 
@@ -130,7 +130,7 @@ func doCLIUpload() error {
 		return errors.Wrap(err, "uploading file")
 	}
 
-	fmt.Println(url)
+	fmt.Println(url) //nolint:forbidigo // Intended as programmatic payload
 	return nil
 }
 
