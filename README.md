@@ -7,6 +7,8 @@
 
 `share` is a small replacement I wrote for sharing my files through external services like CloudApp using Amazon S3. Files are uploaded using this utility into S3 and previewed (if supported) using the included frontend.
 
+![](./docs/demo.gif)
+
 ## Browser Support
 
 The frontend can be used in all modern browsers. Internet Explorer is not supported.
