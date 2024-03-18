@@ -1,3 +1,8 @@
+# 0.14.0 / 2024-03-18
+
+  * Port frontend to Vue 3 / Bootstrap 5.3
+  * Update deps, fix linter errors, improve code
+
 # 0.13.0 / 2023-06-05
 
   * Add support for setting S3 compatible endpoint
