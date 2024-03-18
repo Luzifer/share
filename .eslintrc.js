@@ -8,7 +8,7 @@
 const Module = require('module')
 
 const hacks = [
-  'babel-eslint',
+  '@babel/eslint-parser',
   'eslint-plugin-vue',
 ]
 
@@ -34,7 +34,7 @@ module.exports = {
   },
 
   extends: [
-    'plugin:vue/recommended',
+    'plugin:vue/vue3-recommended',
     'eslint:recommended', // https://eslint.org/docs/rules/
   ],
 
@@ -44,12 +44,14 @@ module.exports = {
 
   parserOptions: {
     ecmaVersion: 2020,
-    parser: 'babel-eslint',
+    parser: '@typescript-eslint/parser',
+    requireConfigFile: false,
   },
 
   plugins: [
     // required to lint *.vue files
     'vue',
+    '@typescript-eslint',
   ],
 
   reportUnusedDisableDirectives: true,
@@ -134,6 +136,7 @@ module.exports = {
     'switch-colon-spacing': ['error'],
     'template-curly-spacing': ['error', 'never'],
     'unicode-bom': ['error', 'never'],
+    'vue/comment-directive': 'off',
     'vue/new-line-between-multi-line-property': ['error'],
     'vue/no-empty-component-block': ['error'],
     'vue/no-reserved-component-names': ['error'],
@@ -141,6 +144,7 @@ module.exports = {
     'vue/no-unused-properties': ['error'],
     'vue/no-unused-refs': ['error'],
     'vue/no-useless-mustaches': ['error'],
+    'vue/no-v-html': 'off', // Disabled for this project
     'vue/order-in-components': ['off'], // Collides with sort-keys
     'vue/require-name-property': ['error'],
     'vue/v-for-delimiter-style': ['error'],

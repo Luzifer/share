@@ -135,13 +135,18 @@ func doCLIUpload() error {
 }
 
 func doBootstrap() error {
-	for _, asset := range []string{"index.html", "app.js", "bundle.css", "bundle.js"} {
-		content, err := frontend.ReadFile(strings.Join([]string{"frontend", asset}, "/"))
+	files, err := frontend.ReadDir("frontend")
+	if err != nil {
+		return fmt.Errorf("listing embedded files: %w", err)
+	}
+
+	for _, asset := range files {
+		content, err := frontend.ReadFile(strings.Join([]string{"frontend", asset.Name()}, "/"))
 		if err != nil {
 			return errors.Wrap(err, "reading baked asset")
 		}
 
-		if _, err := executeUpload(asset, bytes.NewReader(content), false, "", true); err != nil {
+		if _, err := executeUpload(asset.Name(), bytes.NewReader(content), false, "", true); err != nil {
 			return errors.Wrapf(err, "uploading bootstrap asset %q", asset)
 		}
 	}

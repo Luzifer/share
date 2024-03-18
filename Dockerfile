@@ -4,7 +4,12 @@ COPY . /src/share
 WORKDIR /src/share
 
 RUN set -ex \
- && apk add --update git \
+ && apk add --update \
+      nodejs \
+      npm \
+      git \
+      make \
+ && make frontend \
  && go install \
       -ldflags "-X main.version=$(git describe --tags --always || echo dev)" \
       -mod=readonly \

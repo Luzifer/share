@@ -1,2 +1,4 @@
+frontend/fa-*
+frontend/app.*
+node_modules
 share
-src/node_modules

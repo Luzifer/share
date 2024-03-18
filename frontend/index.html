@@ -1,15 +1,12 @@
 <!doctype html>
-<html lang="en">
+<html lang="en"  data-bs-theme="dark">
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="bundle.css">
-
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" 
-          integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
+    <link rel="stylesheet" href="app.css">
 
     <style>
       [v-cloak] { display: none; }
@@ -19,98 +16,8 @@
     <title>Share</title>
   </head>
   <body>
-    <div id="app" v-cloak>
-      <b-navbar
-        variant="primary"
-        type="dark"
-      >
-        <b-navbar-brand href="#">
-          <i class="fas fa-fw fa-share-alt-square mr-1"></i> Share
-        </b-navbar-brand>
-      </b-navbar>
+    <div id="app" v-cloak></div>
 
-      <b-container class="mt-4">
-        <b-row>
-          <b-col>
-            <b-card v-if="loading">
-              <b-card-text class="text-center">
-                <h2><i class="fas fa-spinner fa-pulse"></i></h2>
-                {{ $t('loading') }}
-              </b-card-text>
-            </b-card>
-
-            <template v-else>
-              <b-card
-                v-if="error"
-                bg-variant="danger"
-                text-variant="white"
-              >
-                <b-card-text class="text-center">
-                  <h2><i class="fas fa-exclamation-circle"></i></h2>
-                  {{ error }}
-                </b-card-text>
-              </b-card>
-
-              <b-card v-else-if="fileType.startsWith('image/')">
-                <b-card-text class="text-center">
-                  <a :href="path">
-                    <b-img
-                      :src="path"
-                      fluid
-                    />
-                  </a>
-                </b-card-text>
-              </b-card>
-
-              <b-card v-else-if="fileType.startsWith('video/')">
-                <b-embed
-                  type="video"
-                  :src="path"
-                  allowfullscreen
-                  controls
-                />
-              </b-card>
-
-              <b-card v-else-if="fileType.startsWith('audio/')">
-                <b-card-text class="text-center">
-                  <audio
-                    :src="path"
-                    controls
-                  />
-                </b-card-text>
-              </b-card>
-
-              <b-card
-                v-else-if="fileType.startsWith('text/markdown')"
-                no-body
-              >
-                <b-card-body
-                  v-html="renderMarkdown(text)"
-                />
-              </b-card>
-
-              <b-card v-else-if="fileType.startsWith('text/')">
-                <pre><code>{{ text }}</code></pre>
-              </b-card>
-
-              <b-card v-else>
-                <b-card-text class="text-center">
-                  <h2><i class="fas fa-cloud-download-alt"></i></h2>
-                  <b-button
-                    :href="path"
-                    variant="success"
-                  >
-                    {{ fileName }}
-                  </b-button>
-                </b-card-text>
-              </b-card>
-            </template>
-          </b-col>
-        </b-row>
-      </b-container>
-    </div>
-
-    <script src="bundle.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
