@@ -1,4 +1,4 @@
-default: webpack
+default:
 
 lint:
 	docker run --rm -ti \
@@ -27,5 +27,4 @@ frontend/bundle.js:
 		gh/highlightjs/cdn-release@11.2.0/build/highlight.min.js
 
 publish:
-	curl -sSLo golang.sh https://raw.githubusercontent.com/Luzifer/github-publish/master/golang.sh
-	bash golang.sh
+	bash ci/build.sh
