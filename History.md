@@ -1,3 +1,7 @@
+# 0.14.1 / 2024-03-22
+
+  * Fix: Download-Button not linked to file
+
 # 0.14.0 / 2024-03-18
 
   * Port frontend to Vue 3 / Bootstrap 5.3
