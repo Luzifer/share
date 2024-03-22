@@ -100,9 +100,12 @@
             >
               <div class="card-body text-center">
                 <h2><i class="fas fa-cloud-download-alt" /></h2>
-                <button class="btn btn-success">
+                <a
+                  class="btn btn-success"
+                  :href="path"
+                >
                   {{ fileName }}
-                </button>
+                </a>
               </div>
             </div>
           </template>
