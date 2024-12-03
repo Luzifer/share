@@ -129,7 +129,7 @@ export default defineComponent({
     return {
       error: null,
       fileName: '',
-      fileType: null,
+      fileType: '',
       loading: true,
       path: '',
       text: '',

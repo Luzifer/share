@@ -9,22 +9,22 @@ import { createI18n } from 'vue-i18n'
 import ContentDisplay from './display.vue'
 
 const messages = {
-  en: {
-    fileNotFound: 'The requested file has not been found.',
-    genericError: 'Something went wrong (Status {status})',
-    loading: 'Loading file details...',
-    notPermitted: 'Access to this file was denied.',
-  },
   de: {
     fileNotFound: 'Die angegebene Datei wurde nicht gefunden.',
     genericError: 'Irgendwas lief schief... (Status {status})',
     loading: 'Lade Datei-Informationen...',
     notPermitted: 'Der Zugriff auf diese Datei wurde verweigert.',
   },
+  en: {
+    fileNotFound: 'The requested file has not been found.',
+    genericError: 'Something went wrong (Status {status})',
+    loading: 'Loading file details...',
+    notPermitted: 'Access to this file was denied.',
+  },
 }
 
 const app = createApp({
-  name: 'Share',
+  name: 'ShareApp',
   render() {
     return h(ContentDisplay)
   },
