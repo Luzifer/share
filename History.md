@@ -1,3 +1,10 @@
+# 0.14.2 / 2024-12-03
+
+  * CI: Update workflow
+  * Update Go dependencies
+  * Update Node dependencies
+  * Lint: Fix linter errors
+
 # 0.14.1 / 2024-03-22
 
   * Fix: Download-Button not linked to file
