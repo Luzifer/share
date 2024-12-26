@@ -1,3 +1,9 @@
+# 0.15.0 / 2024-12-26
+
+  * Display PDF documents inline on supported devices
+  * Update node dependencies
+  * Update Go dependencies
+
 # 0.14.2 / 2024-12-03
 
   * CI: Update workflow
