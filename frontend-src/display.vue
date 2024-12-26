@@ -12,7 +12,7 @@
       </div>
     </nav>
 
-    <div class="container mt-4">
+    <div class="container my-4">
       <div class="row">
         <div class="col">
           <div
@@ -33,6 +33,19 @@
               <div class="card-body text-center">
                 <h2><i class="fas fa-exclamation-circle" /></h2>
                 {{ error }}
+              </div>
+            </div>
+
+            <div
+              v-else-if="fileType.startsWith('application/pdf') && canViewPDF"
+              class="card position-relative"
+              style="padding-top: calc(297/210*100%);"
+            >
+              <div class="card-body text-center">
+                <iframe
+                  class="h-100 position-absolute start-0 top-0 w-100"
+                  :src="path"
+                />
               </div>
             </div>
 
@@ -125,6 +138,19 @@ const rewrites = {
 }
 
 export default defineComponent({
+  computed: {
+    canViewPDF(): boolean {
+      /*
+       * iOS reports they can display PDFs but they'll display only
+       * the first page without any means of navigation, therefore we
+       * disable PDF viewing on iOS
+       */
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1
+
+      return navigator.pdfViewerEnabled && !isIOS
+    },
+  },
+
   data() {
     return {
       error: null,
