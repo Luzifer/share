@@ -1,3 +1,8 @@
+# 0.15.1 / 2025-02-12
+
+  * Update Node dependencies
+  * Update Go dependencies
+
 # 0.15.0 / 2024-12-26
 
   * Display PDF documents inline on supported devices
