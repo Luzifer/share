@@ -43,7 +43,7 @@
               <div class="card-body text-center">
                 <iframe
                   class="h-100 position-absolute start-0 top-0 w-100"
-                  :src="path"
+                  :src="`${path}#page=1&view=fit`"
                 />
               </div>
             </div>
