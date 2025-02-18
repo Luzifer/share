@@ -1,3 +1,8 @@
+# 0.15.2 / 2025-02-18
+
+  * Update node dependencies
+  * Fix: Do not resize to A4 but always use the window height
+
 # 0.15.1 / 2025-02-12
 
   * Update Node dependencies
