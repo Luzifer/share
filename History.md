@@ -1,3 +1,7 @@
+# 0.15.3 / 2025-02-18
+
+  * Fix: Calculation was off by one height
+
 # 0.15.2 / 2025-02-18
 
   * Update node dependencies
