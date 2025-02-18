@@ -38,8 +38,7 @@
 
             <div
               v-else-if="fileType.startsWith('application/pdf') && canViewPDF"
-              class="card position-relative"
-              style="padding-top: calc(100vh - 70px - 3rem);"
+              class="card position-relative pdf-frame"
             >
               <div class="card-body text-center">
                 <iframe
@@ -247,3 +246,10 @@ export default defineComponent({
   },
 })
 </script>
+
+<style scoped>
+.pdf-frame {
+  height: 0;
+  padding-top: calc(100vh - 70px - 3rem);
+}
+</style>
