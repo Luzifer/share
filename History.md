@@ -1,3 +1,7 @@
+# 0.16.0 / 2025-02-18
+
+  * Specify `view` and `page` for PDF display
+
 # 0.15.3 / 2025-02-18
 
   * Fix: Calculation was off by one height
