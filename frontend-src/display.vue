@@ -136,6 +136,17 @@ const rewrites = {
   'application/javascript': 'text/javascript',
 }
 
+const markdownClassMap = {
+  table: 'table table-sm',
+}
+
+const markdownBindings = Object.keys(markdownClassMap)
+  .map(key => ({
+    regex: new RegExp(`<${key}(.*)>`, 'g'),
+    replace: `<${key} class="${markdownClassMap[key]}" $1>`,
+    type: 'output',
+  }))
+
 export default defineComponent({
   computed: {
     canViewPDF(): boolean {
@@ -174,7 +185,27 @@ export default defineComponent({
     },
 
     renderMarkdown(text) {
-      return new showdown.Converter().makeHtml(text)
+      const sd = new showdown.Converter({
+        backslashEscapesHTMLTags: true,
+        disableForced4SpacesIndentedSublists: true,
+        emoji: true,
+        extensions: [...markdownBindings],
+        ghCodeBlocks: true,
+        ghCompatibleHeaderId: true,
+        ghMentions: false,
+        literalMidWordUnderscores: true,
+        omitExtraWLInCodeBlocks: true,
+        requireSpaceBeforeHeadingText: true,
+        simpleLineBreaks: true,
+        simplifiedAutoLink: true,
+        splitAdjacentBlockquotes: true,
+        strikethrough: true,
+        tables: true,
+        tablesHeaderId: true,
+        tasklists: true,
+      })
+
+      return sd.makeHtml(text)
     },
   },
 
