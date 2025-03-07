@@ -1,3 +1,9 @@
+# 0.17.0 / 2025-03-07
+
+  * Update go dependencies
+  * Update markdown renderer configuration
+  * Update Node dependencies
+
 # 0.16.0 / 2025-02-18
 
   * Specify `view` and `page` for PDF display
