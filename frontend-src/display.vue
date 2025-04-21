@@ -278,9 +278,14 @@ export default defineComponent({
 })
 </script>
 
-<style scoped>
+<style>
 .pdf-frame {
   height: 0;
   padding-top: calc(100vh - 70px - 3rem);
+}
+
+blockquote {
+  border-left: 0.25rem solid var(--bs-secondary-border-subtle);
+  padding-left: 0.5rem;
 }
 </style>
