@@ -3,6 +3,7 @@ package uploader
 import (
 	"bytes"
 	"compress/gzip"
+	"context"
 	"crypto/sha256"
 	"fmt"
 	"html/template"
@@ -13,9 +14,10 @@ import (
 	"time"
 
 	"github.com/Luzifer/share/pkg/progress"
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/cheggaaa/pb/v3"
 	"github.com/gofrs/uuid"
 	"github.com/gosimple/slug"
@@ -66,13 +68,19 @@ func Run(opts Opts) (string, error) {
 		contentEncoding = aws.String("gzip")
 	}
 
-	var awsCfgs []*aws.Config
-	if opts.Endpoint != "" {
-		awsCfgs = append(awsCfgs, &aws.Config{Endpoint: &opts.Endpoint, S3ForcePathStyle: aws.Bool(true)})
+	awsCfg, err := config.LoadDefaultConfig(context.TODO())
+	if err != nil {
+		return "", fmt.Errorf("loading AWS uploader config: %w", err)
 	}
 
-	sess := session.Must(session.NewSession(awsCfgs...))
-	svc := s3.New(sess)
+	var cfgOpts []func(*s3.Options)
+	if opts.Endpoint != "" {
+		cfgOpts = append(cfgOpts, func(o *s3.Options) {
+			o.BaseEndpoint = aws.String(opts.Endpoint)
+			o.UsePathStyle = true
+		})
+	}
+	s3Client := s3.NewFromConfig(awsCfg, cfgOpts...)
 
 	ps, err := progress.New(opts.InfileHandle)
 	if err != nil {
@@ -82,7 +90,7 @@ func Run(opts Opts) (string, error) {
 	if opts.ProgressBar != nil {
 		opts.ProgressBar.SetTotal(ps.Size)
 		opts.ProgressBar.Set(pb.Bytes, true)
-		opts.ProgressBar.Set("prefix", opts.InfileName)
+		opts.ProgressBar.Set("prefix", path.Base(opts.InfileName))
 		opts.ProgressBar.Start()
 		barUpdate := true
 
@@ -100,13 +108,14 @@ func Run(opts Opts) (string, error) {
 		}()
 	}
 
-	if _, err = svc.PutObject(&s3.PutObjectInput{
-		Body:            ps,
-		Bucket:          aws.String(opts.Bucket),
-		ContentEncoding: contentEncoding,
-		ContentType:     aws.String(mimeType),
-		Key:             aws.String(upFile),
-	}); err != nil {
+	if _, err = manager.NewUploader(s3Client).
+		Upload(context.TODO(), &s3.PutObjectInput{
+			Body:            ps,
+			Bucket:          aws.String(opts.Bucket),
+			ContentEncoding: contentEncoding,
+			ContentType:     aws.String(mimeType),
+			Key:             aws.String(upFile),
+		}); err != nil {
 		return "", fmt.Errorf("putting object to S3: %w", err)
 	}
 

@@ -40,6 +40,7 @@ type (
 		Endpoint string
 	}
 
+	// OptsSetter defines a function type to set options
 	OptsSetter func(*Opts)
 )
 
@@ -70,6 +71,13 @@ func WithGzip() OptsSetter { return func(o *Opts) { o.ForceGzip = true } }
 
 // WithMimeType sets the mime-type for the upload
 func WithMimeType(t string) OptsSetter { return func(o *Opts) { o.OverrideMimeType = t } }
+
+// WithProgress enables progressbar output for the upload
+func WithProgress() OptsSetter {
+	return func(o *Opts) {
+		o.ProgressBar = pb.New64(0)
+	}
+}
 
 // With returns a copy of the original Opts with all setters applied
 func (o Opts) With(setters ...OptsSetter) Opts {

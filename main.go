@@ -71,6 +71,10 @@ func main() {
 		Endpoint: cfg.Endpoint,
 	}
 
+	if cfg.Progress {
+		uploaderOpts = uploaderOpts.With(uploader.WithProgress())
+	}
+
 	switch {
 	case cfg.Bootstrap:
 		if err := bootstrap.Run(uploaderOpts); err != nil {
