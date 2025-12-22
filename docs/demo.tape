@@ -32,7 +32,7 @@ Type "       AWS_SECRET_ACCESS_KEY=minioadmin ENDPOINT=http://localhost:9000/"
 Enter 2
 Type "# Set parameters --base-url, -- bucket and --progress through ENV"
 Enter
-Type "export BUCKET=share BASE_URL=http://localhost:9000/ PROGRESS=true"
+Type "export BUCKET=share BASE_URL='http://localhost:9000/#' PROGRESS=true"
 Enter 2
 
 Type "# Upload embedded frontend assets to the root of the bucket"
@@ -49,7 +49,7 @@ Enter
 Type "# Share a text through stdin using a pipe"
 Enter
 Show
-Type "echo 'Hi, I am a shared text!' | share -"
+Type "echo 'Hi, I am a shared text!' | ./share -"
 Sleep 500ms
 Enter
 
