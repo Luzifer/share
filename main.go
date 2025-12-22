@@ -18,7 +18,7 @@ var (
 	cfg = struct {
 		BaseURL        string `flag:"base-url" default:"" description:"URL to prepend before filename"`
 		Bootstrap      bool   `flag:"bootstrap" default:"false" description:"Upload frontend files into bucket"`
-		Bucket         string `flag:"bucket" default:"" description:"S3 bucket to upload files to" validate:"nonzero"`
+		Bucket         string `flag:"bucket" default:"" description:"S3 bucket to upload files to" validate:"nonzero"` //revive:disable-line:struct-tag
 		ContentType    string `flag:"content-type,c" default:"" description:"Force content-type to be set to this value"`
 		Endpoint       string `flag:"endpoint" default:"" description:"Override AWS S3 endpoint (i.e. to use MinIO)"`
 		FileTemplate   string `flag:"file-template" vardefault:"file_template" description:"Full name template of the uploaded file"`

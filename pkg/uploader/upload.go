@@ -83,7 +83,7 @@ func Run(opts Opts) (string, error) {
 
 	ps, err := progress.New(opts.InfileHandle)
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("creating progress seeker: %w", err)
 	}
 
 	if opts.ProgressBar != nil {
