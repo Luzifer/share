@@ -1,23 +1,23 @@
 {
   "devDependencies": {
-    "@babel/eslint-parser": "^7.26.8",
-    "@typescript-eslint/eslint-plugin": "^8.26.0",
-    "@typescript-eslint/parser": "^8.26.0",
-    "esbuild": "^0.25.0",
-    "esbuild-plugin-vue3": "^0.4.2",
-    "esbuild-sass-plugin": "^3.3.1",
-    "eslint": "^9.21.0",
-    "eslint-plugin-vue": "^9.33.0",
-    "typescript": "^5.8.2"
+    "@babel/eslint-parser": "7.26.8",
+    "@typescript-eslint/eslint-plugin": "8.26.0",
+    "@typescript-eslint/parser": "8.26.0",
+    "esbuild": "0.25.0",
+    "esbuild-plugin-vue3": "0.4.2",
+    "esbuild-sass-plugin": "3.3.1",
+    "eslint": "9.21.0",
+    "eslint-plugin-vue": "9.33.0",
+    "typescript": "5.8.2"
   },
   "name": "share",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-free": "^6.7.2",
-    "bootstrap": "^5.3.3",
-    "highlight.js": "^11.11.1",
-    "showdown": "^2.1.0",
-    "vue": "^3.5.13",
+    "bootstrap": "5.3.3",
+    "highlight.js": "11.11.1",
+    "showdown": "2.1.0",
+    "vue": "3.5.13",
     "vue-i18n": "^11.1.1"
   },
   "overrides": {
