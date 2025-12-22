@@ -12,7 +12,7 @@ frontend: node_modules
 	node ci/build.mjs
 
 node_modules:
-	npm ci
+	npm ci --include=dev
 
 publish: frontend
 	bash ci/build.sh
