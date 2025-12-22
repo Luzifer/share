@@ -1,4 +1,4 @@
-FROM golang:alpine as builder
+FROM golang:1.25-alpine as builder
 
 COPY . /src/share
 WORKDIR /src/share
@@ -17,9 +17,9 @@ RUN set -ex \
       -trimpath
 
 
-FROM alpine:latest
+FROM alpine:3.23
 
-LABEL maintainer "Knut Ahlers <knut@ahlers.me>"
+LABEL maintainer="Knut Ahlers <knut@ahlers.me>"
 
 RUN set -ex \
  && apk --no-cache add \
