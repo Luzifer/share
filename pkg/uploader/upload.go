@@ -21,8 +21,7 @@ import (
 	"github.com/cheggaaa/pb/v3"
 	"github.com/gofrs/uuid"
 	"github.com/gosimple/slug"
-	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 const barUpdateInterval = 100 * time.Millisecond
@@ -36,7 +35,7 @@ func Run(opts Opts) (string, error) {
 
 	if opts.UseCalculatedFilename {
 		if upFile, err = calculateUploadFilename(opts.FileTemplate, opts.InfileName, opts.InfileHandle); err != nil {
-			return "", errors.Wrap(err, "calculating upload filename")
+			return "", fmt.Errorf("calculating upload filename: %w", err)
 		}
 	}
 
@@ -49,7 +48,7 @@ func Run(opts Opts) (string, error) {
 		mimeType = opts.OverrideMimeType
 	}
 
-	log.Debugf("Uploading file to %q with type %q", upFile, mimeType)
+	logrus.Debugf("Uploading file to %q with type %q", upFile, mimeType)
 
 	var contentEncoding *string
 	if opts.ForceGzip {
@@ -57,11 +56,11 @@ func Run(opts Opts) (string, error) {
 		gw := gzip.NewWriter(buf)
 
 		if _, err := io.Copy(gw, opts.InfileHandle); err != nil {
-			return "", errors.Wrap(err, "compressing file")
+			return "", fmt.Errorf("compressing file: %w", err)
 		}
 
 		if err := gw.Close(); err != nil {
-			return "", errors.Wrap(err, "closing gzip writer")
+			return "", fmt.Errorf("closing gzip writer: %w", err)
 		}
 
 		opts.InfileHandle = bytes.NewReader(buf.Bytes())

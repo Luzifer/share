@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/Luzifer/share/pkg/uploader"
-	"github.com/pkg/errors"
 )
 
 //go:embed frontend/*
@@ -24,14 +23,14 @@ func Run(opts uploader.Opts) error {
 	for _, asset := range files {
 		content, err := frontend.ReadFile(strings.Join([]string{"frontend", asset.Name()}, "/"))
 		if err != nil {
-			return errors.Wrap(err, "reading baked asset")
+			return fmt.Errorf("reading baked asset: %w", err)
 		}
 
 		if _, err := uploader.Run(opts.With(
 			uploader.WithFile(asset.Name(), bytes.NewReader(content)),
 			uploader.WithGzip(),
 		)); err != nil {
-			return errors.Wrapf(err, "uploading bootstrap asset %q", asset)
+			return fmt.Errorf("uploading bootstrap asset %q: %w", asset, err)
 		}
 	}
 	return nil

@@ -7,7 +7,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 
 	"github.com/Luzifer/rconfig/v2"
@@ -100,7 +99,7 @@ func main() {
 
 func doCLIUpload() error {
 	if len(rconfig.Args()) == 1 {
-		return errors.New("missing argument: file to upload")
+		return fmt.Errorf("missing argument: file to upload")
 	}
 
 	if cfg.BaseURL == "" {
@@ -130,7 +129,7 @@ func doCLIUpload() error {
 	} else {
 		inFileHandle, err := os.Open(inFileName) //#nosec:G304 // Inentional read of arbitrary file
 		if err != nil {
-			return errors.Wrap(err, "opening source file")
+			return fmt.Errorf("opening source file: %w", err)
 		}
 		defer inFileHandle.Close() //nolint:errcheck // Irrelevant, file is closed by process exit
 		inFile = inFileHandle
@@ -147,7 +146,7 @@ func doCLIUpload() error {
 
 	url, err := uploader.Run(uploaderOpts.With(optsSetters...))
 	if err != nil {
-		return errors.Wrap(err, "uploading file")
+		return fmt.Errorf("uploading file: %w", err)
 	}
 
 	fmt.Println(url) //nolint:forbidigo // Intended as programmatic payload
