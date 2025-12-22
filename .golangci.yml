@@ -1,0 +1,147 @@
+version: '2'
+
+run:
+  modules-download-mode: readonly
+  relative-path-mode: wd
+
+output:
+  formats:
+    tab:
+      path: stdout
+      colors: false
+
+linters:
+  default: none
+  enable:
+    - asciicheck
+    - bidichk
+    - bodyclose
+    - containedctx
+    - contextcheck
+    - copyloopvar
+    - dogsled
+    - durationcheck
+    - errcheck
+    - errchkjson
+    - forbidigo
+    - funlen
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - godox
+    - gosec
+    - govet
+    - ineffassign
+    - misspell
+    - mnd
+    - nakedret
+    - nilerr
+    - nilnil
+    - noctx
+    - nolintlint
+    - revive
+    - staticcheck
+    - unconvert
+    - unused
+    - wastedassign
+    - wrapcheck
+
+  settings:
+    funlen:
+      lines: 100
+      statements: 60
+
+    gocyclo:
+      min-complexity: 15
+
+    mnd:
+      ignored-functions:
+        - strconv.(?:Format|Parse)\B+
+
+    revive:
+      rules:
+        - name: atomic
+        - name: banned-characters
+          arguments:
+            - ;
+        - name: bare-return
+        - name: blank-imports
+        - name: bool-literal-in-expr
+        - name: call-to-gc
+        - name: confusing-naming
+        - name: confusing-results
+        - name: constant-logical-expr
+        - name: context-as-argument
+        - name: context-keys-type
+        - name: deep-exit
+        - name: defer
+        - name: dot-imports
+        - name: duplicated-imports
+        - name: early-return
+        - name: empty-block
+        - name: empty-lines
+        - name: errorf
+        - name: error-naming
+        - name: error-return
+        - name: error-strings
+        - name: exported
+          arguments:
+            - sayRepetitiveInsteadOfStutters
+        - name: flag-parameter
+        - name: get-return
+        - name: identical-branches
+        - name: if-return
+        - name: import-shadowing
+        - name: increment-decrement
+        - name: indent-error-flow
+        - name: modifies-parameter
+        - name: modifies-value-receiver
+        - name: optimize-operands-order
+        - name: range
+        - name: range-val-address
+        - name: range-val-in-closure
+        - name: receiver-naming
+        - name: redefines-builtin-id
+        - name: string-of-int
+        - name: struct-tag
+        - name: superfluous-else
+        - name: time-equal
+        - name: time-naming
+        - name: unconditional-recursion
+        - name: unexported-naming
+        - name: unexported-return
+        - name: unhandled-error
+          arguments:
+            - fmt.(Fp|P)rint(f|ln|)
+        - name: unnecessary-stmt
+        - name: unreachable-code
+        - name: unused-parameter
+        - name: unused-receiver
+        - name: useless-break
+        - name: var-declaration
+        - name: var-naming
+        - name: waitgroup-by-value
+
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+formatters:
+  enable:
+    - gofmt
+    - gofumpt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

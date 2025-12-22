@@ -1,4 +1,4 @@
-frontend/fa-*
-frontend/app.*
+pkg/bootstrap/frontend/fa-*
+pkg/bootstrap/frontend/app.*
 node_modules
 share

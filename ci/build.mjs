@@ -15,7 +15,7 @@ const buildOpts = {
     '.woff2': 'file',
   },
   minify: true,
-  outfile: 'frontend/app.js',
+  outfile: 'pkg/bootstrap/frontend/app.js',
   plugins: [
     sassPlugin(),
     vuePlugin(),

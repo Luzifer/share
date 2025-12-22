@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"embed"
 	"fmt"
 	"io"
 	"os"
@@ -12,6 +11,8 @@ import (
 	"github.com/sirupsen/logrus"
 
 	"github.com/Luzifer/rconfig/v2"
+	"github.com/Luzifer/share/pkg/bootstrap"
+	"github.com/Luzifer/share/pkg/uploader"
 )
 
 var (
@@ -28,8 +29,7 @@ var (
 		VersionAndExit bool   `flag:"version" default:"false" description:"Prints current version and exits"`
 	}{}
 
-	//go:embed frontend/*
-	frontend embed.FS
+	uploaderOpts uploader.Opts
 
 	version = "dev"
 )
@@ -64,9 +64,16 @@ func main() {
 		os.Exit(0)
 	}
 
+	// Base-Options to clone from
+	uploaderOpts = uploader.Opts{
+		BaseURL:  cfg.BaseURL,
+		Bucket:   cfg.Bucket,
+		Endpoint: cfg.Endpoint,
+	}
+
 	switch {
 	case cfg.Bootstrap:
-		if err := doBootstrap(); err != nil {
+		if err := bootstrap.Run(uploaderOpts); err != nil {
 			logrus.WithError(err).Fatal("bootstrapping resources")
 		}
 		logrus.Info("Bucket bootstrap finished: Frontend uploaded")
@@ -125,30 +132,20 @@ func doCLIUpload() error {
 		inFile = inFileHandle
 	}
 
-	url, err := executeUpload(inFileName, inFile, true, cfg.ContentType, false)
+	optsSetters := []uploader.OptsSetter{
+		uploader.WithFile(inFileName, inFile),
+		uploader.WithCalculatedFilename(cfg.FileTemplate),
+	}
+
+	if cfg.ContentType != "" {
+		optsSetters = append(optsSetters, uploader.WithMimeType(cfg.ContentType))
+	}
+
+	url, err := uploader.Run(uploaderOpts.With(optsSetters...))
 	if err != nil {
 		return errors.Wrap(err, "uploading file")
 	}
 
 	fmt.Println(url) //nolint:forbidigo // Intended as programmatic payload
-	return nil
-}
-
-func doBootstrap() error {
-	files, err := frontend.ReadDir("frontend")
-	if err != nil {
-		return fmt.Errorf("listing embedded files: %w", err)
-	}
-
-	for _, asset := range files {
-		content, err := frontend.ReadFile(strings.Join([]string{"frontend", asset.Name()}, "/"))
-		if err != nil {
-			return errors.Wrap(err, "reading baked asset")
-		}
-
-		if _, err := executeUpload(asset.Name(), bytes.NewReader(content), false, "", true); err != nil {
-			return errors.Wrapf(err, "uploading bootstrap asset %q", asset)
-		}
-	}
 	return nil
 }

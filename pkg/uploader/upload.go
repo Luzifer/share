@@ -1,4 +1,4 @@
-package main
+package uploader
 
 import (
 	"bytes"
@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Luzifer/share/pkg/progress"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
@@ -24,15 +25,15 @@ import (
 
 const barUpdateInterval = 100 * time.Millisecond
 
-//revive:disable-next-line:flag-parameter // Fine in this case
-func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedFilename bool, overrideMimeType string, forceGzip bool) (string, error) {
+// Run executes the upload process
+func Run(opts Opts) (string, error) {
 	var (
-		upFile = inFileName
+		upFile = opts.InfileName
 		err    error
 	)
 
-	if useCalculatedFilename {
-		if upFile, err = calculateUploadFilename(inFileName, inFileHandle); err != nil {
+	if opts.UseCalculatedFilename {
+		if upFile, err = calculateUploadFilename(opts.FileTemplate, opts.InfileName, opts.InfileHandle); err != nil {
 			return "", errors.Wrap(err, "calculating upload filename")
 		}
 	}
@@ -42,18 +43,18 @@ func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedF
 		mimeType = "application/octet-stream"
 	}
 
-	if overrideMimeType != "" {
-		mimeType = overrideMimeType
+	if opts.OverrideMimeType != "" {
+		mimeType = opts.OverrideMimeType
 	}
 
 	log.Debugf("Uploading file to %q with type %q", upFile, mimeType)
 
 	var contentEncoding *string
-	if forceGzip {
+	if opts.ForceGzip {
 		buf := new(bytes.Buffer)
 		gw := gzip.NewWriter(buf)
 
-		if _, err := io.Copy(gw, inFileHandle); err != nil {
+		if _, err := io.Copy(gw, opts.InfileHandle); err != nil {
 			return "", errors.Wrap(err, "compressing file")
 		}
 
@@ -61,47 +62,47 @@ func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedF
 			return "", errors.Wrap(err, "closing gzip writer")
 		}
 
-		inFileHandle = bytes.NewReader(buf.Bytes())
+		opts.InfileHandle = bytes.NewReader(buf.Bytes())
 		contentEncoding = aws.String("gzip")
 	}
 
 	var awsCfgs []*aws.Config
-	if cfg.Endpoint != "" {
-		awsCfgs = append(awsCfgs, &aws.Config{Endpoint: &cfg.Endpoint, S3ForcePathStyle: aws.Bool(true)})
+	if opts.Endpoint != "" {
+		awsCfgs = append(awsCfgs, &aws.Config{Endpoint: &opts.Endpoint, S3ForcePathStyle: aws.Bool(true)})
 	}
 
 	sess := session.Must(session.NewSession(awsCfgs...))
 	svc := s3.New(sess)
 
-	ps, err := newProgressSeeker(inFileHandle)
+	ps, err := progress.New(opts.InfileHandle)
 	if err != nil {
 		return "", err
 	}
 
-	if cfg.Progress {
-		bar := pb.New64(ps.Size)
-		bar.Set(pb.Bytes, true)
-		bar.Set("prefix", inFileName)
-		bar.Start()
+	if opts.ProgressBar != nil {
+		opts.ProgressBar.SetTotal(ps.Size)
+		opts.ProgressBar.Set(pb.Bytes, true)
+		opts.ProgressBar.Set("prefix", opts.InfileName)
+		opts.ProgressBar.Start()
 		barUpdate := true
 
 		go func() {
 			for barUpdate {
-				bar.SetCurrent(ps.Progress)
+				opts.ProgressBar.SetCurrent(ps.Progress)
 				time.Sleep(barUpdateInterval)
 			}
 		}()
 
 		defer func() {
 			barUpdate = false
-			bar.SetCurrent(ps.Progress)
-			bar.Finish()
+			opts.ProgressBar.SetCurrent(ps.Progress)
+			opts.ProgressBar.Finish()
 		}()
 	}
 
 	if _, err = svc.PutObject(&s3.PutObjectInput{
 		Body:            ps,
-		Bucket:          aws.String(cfg.Bucket),
+		Bucket:          aws.String(opts.Bucket),
 		ContentEncoding: contentEncoding,
 		ContentType:     aws.String(mimeType),
 		Key:             aws.String(upFile),
@@ -109,10 +110,10 @@ func executeUpload(inFileName string, inFileHandle io.ReadSeeker, useCalculatedF
 		return "", fmt.Errorf("putting object to S3: %w", err)
 	}
 
-	return fmt.Sprintf("%s%s", cfg.BaseURL, upFile), nil
+	return fmt.Sprintf("%s%s", opts.BaseURL, upFile), nil
 }
 
-func calculateUploadFilename(inFile string, inFileHandle io.ReadSeeker) (string, error) {
+func calculateUploadFilename(fileTemplate, inFile string, inFileHandle io.ReadSeeker) (string, error) {
 	fileHash, err := hashFile(inFileHandle)
 	if err != nil {
 		return "", err
@@ -123,7 +124,7 @@ func calculateUploadFilename(inFile string, inFileHandle io.ReadSeeker) (string,
 		path.Ext(inFile),
 	}, "")
 
-	return executeTemplate(cfg.FileTemplate, map[string]interface{}{
+	return executeTemplate(fileTemplate, map[string]interface{}{
 		"Ext":          path.Ext(inFile),
 		"FileName":     path.Base(inFile),
 		"Hash":         fileHash,

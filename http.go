@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/Luzifer/share/pkg/uploader"
 	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
 )
@@ -39,7 +40,10 @@ func simpleFilePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	url, err := executeUpload(fh.Filename, f, true, "", false)
+	url, err := uploader.Run(uploaderOpts.With(
+		uploader.WithFile(fh.Filename, f),
+		uploader.WithCalculatedFilename(cfg.FileTemplate),
+	))
 	if err != nil {
 		logger.WithError(err).Error("uploading file from HTTP request")
 		http.Error(w, errStr, http.StatusInternalServerError)
