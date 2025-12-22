@@ -1,3 +1,11 @@
+# 0.18.0 / 2025-12-22
+
+  * feat: add style for blockquote to be visually distinguishable
+  * feat(ci): add GHCR publishing
+  * fix(deps): update dependency bootstrap to v5.3.8
+  * fix(deps): update dependency vue-i18n to v11.2.2
+  * fix(deps): update dependency vue to v3.5.26
+
 # 0.17.0 / 2025-03-07
 
   * Update go dependencies
