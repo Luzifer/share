@@ -6,7 +6,7 @@
     "esbuild": "0.25.0",
     "esbuild-plugin-vue3": "0.4.2",
     "esbuild-sass-plugin": "3.3.1",
-    "eslint": "9.21.0",
+    "eslint": "9.39.2",
     "eslint-plugin-vue": "9.33.0",
     "typescript": "5.8.2"
   },
