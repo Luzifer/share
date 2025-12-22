@@ -1,7 +1,6 @@
-[![Go Report Card](https://goreportcard.com/badge/github.com/Luzifer/share)](https://goreportcard.com/report/github.com/Luzifer/share)
-![](https://badges.fyi/github/license/Luzifer/share)
-![](https://badges.fyi/github/downloads/Luzifer/share)
-![](https://badges.fyi/github/latest-release/Luzifer/share)
+![](https://img.shields.io/github/license/Luzifer/share)
+![](https://img.shields.io/github/downloads/Luzifer/share/total)
+![](https://img.shields.io/github/v/release/Luzifer/share)
 
 # Luzifer / share
 
