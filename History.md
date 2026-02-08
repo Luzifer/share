@@ -1,3 +1,12 @@
+# 0.18.1 / 2026-02-08
+
+  * chore: replace deprecated manager with transfermanager
+  * fix(deps): update aws-sdk-go-v2 monorepo
+  * fix(deps): update dependency vue-i18n to v11.2.8
+  * fix(deps): update dependency vue to v3.5.27
+  * fix(deps): update module github.com/luzifer/rconfig/v2 to v2.6.1
+  * fix(deps): update module github.com/sirupsen/logrus to v1.9.4
+
 # 0.18.0 / 2025-12-22
 
   * feat: add style for blockquote to be visually distinguishable
