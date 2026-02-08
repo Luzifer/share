@@ -16,7 +16,7 @@ import (
 	"github.com/Luzifer/share/pkg/progress"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
-	"github.com/aws/aws-sdk-go-v2/feature/s3/manager"
+	"github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/cheggaaa/pb/v3"
 	"github.com/gofrs/uuid"
@@ -107,8 +107,8 @@ func Run(opts Opts) (string, error) {
 		}()
 	}
 
-	if _, err = manager.NewUploader(s3Client).
-		Upload(context.TODO(), &s3.PutObjectInput{
+	if _, err = transfermanager.New(s3Client).
+		UploadObject(context.TODO(), &transfermanager.UploadObjectInput{
 			Body:            ps,
 			Bucket:          aws.String(opts.Bucket),
 			ContentEncoding: contentEncoding,
