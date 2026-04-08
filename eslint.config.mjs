@@ -119,7 +119,6 @@ export default [
       'vue/order-in-components': ['off'],
       'vue/require-name-property': ['error'],
       'vue/v-for-delimiter-style': ['error'],
-      'vue/v-on-function-call': ['error'],
       'wrap-iife': ['error'],
       'yoda': ['error'],
     },
