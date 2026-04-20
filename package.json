@@ -9,7 +9,7 @@
     "esbuild-sass-plugin": "3.7.0",
     "eslint": "10.2.0",
     "eslint-plugin-vue": "10.8.0",
-    "typescript": "6.0.2"
+    "typescript": "6.0.3"
   },
   "name": "share",
   "private": true,
