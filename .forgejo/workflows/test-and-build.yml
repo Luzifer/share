@@ -31,10 +31,7 @@ jobs:
           go test -cover -v ./...
           golangci-lint run ./...
 
-      - name: Build release
-        run: make publish
-        env:
-          FORCE_SKIP_UPLOAD: 'true'
-          MOD_MODE: readonly
-          NO_TESTS: 'true'
-          PACKAGES: '.'
+      - name: Do a quick local compile
+        run: |
+          make frontend
+          go build .
