@@ -1,3 +1,12 @@
+# 0.18.2 / 2026-05-06
+
+  * chore: update linter config; resolve linter issues
+  * fix(deps): update aws-sdk-go-v2 monorepo
+  * fix(deps): update dependency @fortawesome/fontawesome-free to v7
+  * fix(deps): update dependency vue-i18n to v11.4.0
+  * fix(deps): update dependency vue to v3.5.33
+  * fix(deps): update module github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager to v0.1.20
+
 # 0.18.1 / 2026-02-08
 
   * chore: replace deprecated manager with transfermanager
