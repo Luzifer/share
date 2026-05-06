@@ -1,3 +1,4 @@
+// Package uploader provides helpers to upload files to S3-compatible storage.
 package uploader
 
 import (
@@ -9,7 +10,7 @@ import (
 type (
 	// Opts define how the upload works
 	Opts struct {
-		/// Upload-Related
+		// Upload-Related
 
 		// Original name of the file to uploaded
 		InfileName string
@@ -23,7 +24,7 @@ type (
 		// Use filename from template
 		UseCalculatedFilename bool
 
-		/// Display-Related
+		// Display-Related
 
 		// BaseURL to reach the uploaded content
 		BaseURL string
@@ -32,7 +33,7 @@ type (
 		// If set this bar will be provided with the progress
 		ProgressBar *pb.ProgressBar
 
-		/// S3-Related
+		// S3-Related
 
 		// Bucket to upload into
 		Bucket string

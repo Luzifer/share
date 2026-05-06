@@ -1,3 +1,4 @@
+// Package progress provides readers that track upload progress.
 package progress
 
 import (

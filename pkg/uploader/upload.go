@@ -13,7 +13,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Luzifer/share/pkg/progress"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager"
@@ -22,6 +21,8 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gosimple/slug"
 	"github.com/sirupsen/logrus"
+
+	"github.com/Luzifer/share/pkg/progress"
 )
 
 const barUpdateInterval = 100 * time.Millisecond
@@ -132,7 +133,7 @@ func calculateUploadFilename(fileTemplate, inFile string, inFileHandle io.ReadSe
 		path.Ext(inFile),
 	}, "")
 
-	return executeTemplate(fileTemplate, map[string]interface{}{
+	return executeTemplate(fileTemplate, map[string]any{
 		"Ext":          path.Ext(inFile),
 		"FileName":     path.Base(inFile),
 		"Hash":         fileHash,
@@ -154,7 +155,7 @@ func hashFile(inFileHandle io.ReadSeeker) (hexHash string, err error) {
 	return fmt.Sprintf("%x", shaHash.Sum(nil)), nil
 }
 
-func executeTemplate(tplStr string, vars map[string]interface{}) (string, error) {
+func executeTemplate(tplStr string, vars map[string]any) (string, error) {
 	tpl, err := template.New("filename").Parse(tplStr)
 	if err != nil {
 		return "", fmt.Errorf("parsing filename template: %w", err)

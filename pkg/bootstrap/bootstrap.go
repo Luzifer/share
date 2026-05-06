@@ -1,3 +1,4 @@
+// Package bootstrap uploads embedded frontend assets into the configured bucket.
 package bootstrap
 
 import (

@@ -1,3 +1,4 @@
+// Package main provides the share command and its HTTP upload endpoint.
 package main
 
 import (
@@ -5,9 +6,10 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Luzifer/share/pkg/uploader"
 	"github.com/gofrs/uuid"
 	"github.com/sirupsen/logrus"
+
+	"github.com/Luzifer/share/pkg/uploader"
 )
 
 func doListen() (err error) {
