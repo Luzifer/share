@@ -6,7 +6,7 @@ require (
 	github.com/Luzifer/rconfig/v2 v2.6.2
 	github.com/aws/aws-sdk-go-v2 v1.41.12
 	github.com/aws/aws-sdk-go-v2/config v1.32.23
-	github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.2.7
+	github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.2.8
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.103.2
 	github.com/cheggaaa/pb/v3 v3.1.7
 	github.com/gofrs/uuid v4.4.0+incompatible
