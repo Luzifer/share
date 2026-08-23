@@ -8,7 +8,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.32.37
 	github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager v0.3.14
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.107.2
-	github.com/cheggaaa/pb/v3 v3.2.0
+	github.com/cheggaaa/pb/v3 v3.2.1
 	github.com/gofrs/uuid v4.4.0+incompatible
 	github.com/gosimple/slug v1.15.0
 	github.com/sirupsen/logrus v1.10.1
@@ -36,10 +36,10 @@ require (
 	github.com/fatih/color v1.19.0 // indirect
 	github.com/gosimple/unidecode v1.0.1 // indirect
 	github.com/mattn/go-colorable v0.1.15 // indirect
-	github.com/mattn/go-isatty v0.0.22 // indirect
-	github.com/mattn/go-runewidth v0.0.24 // indirect
+	github.com/mattn/go-isatty v0.0.24 // indirect
+	github.com/mattn/go-runewidth v0.0.27 // indirect
 	github.com/spf13/pflag v1.0.10 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
-	golang.org/x/sys v0.46.0 // indirect
+	golang.org/x/sys v0.47.0 // indirect
 	gopkg.in/validator.v2 v2.0.1 // indirect
 )
