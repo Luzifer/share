@@ -41,6 +41,7 @@ func simpleFilePost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, errStr, http.StatusBadRequest)
 		return
 	}
+	defer func() { _ = f.Close() }()
 
 	url, err := uploader.Run(uploaderOpts.With(
 		uploader.WithFile(fh.Filename, f),
