@@ -15,7 +15,7 @@
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-free": "7.3.1",
-    "bootstrap": "5.3.8",
+    "bootstrap": "5.3.9",
     "highlight.js": "11.12.0",
     "showdown": "2.1.0",
     "vue": "3.5.45",
